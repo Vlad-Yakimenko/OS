@@ -12,7 +12,7 @@ import kotlin.system.exitProcess
 class Server(
     host: String,
     port: Int,
-    private val type: String,
+    private val valueType: String,
     private val testCase: Int,
     private var promptEnabled: Boolean
 ) {
@@ -24,7 +24,6 @@ class Server(
     private val address: InetSocketAddress = InetSocketAddress(host, port)
     private lateinit var server: ServerSocket
     private val clientProcesses = mutableListOf<Process>()
-    private val futureResults: MutableList<Future<Any>> = mutableListOf()
     val results: MutableMap<String, Double> = mutableMapOf()
 
     private var calculationsEnabled = true
@@ -37,6 +36,7 @@ class Server(
     fun start() {
         server = ServerSocket(address.port)
         val executorService = Executors.newFixedThreadPool(2)
+        val futureResults: MutableList<Future<Any>> = mutableListOf()
 
         compute("f")
         compute("g")
@@ -77,7 +77,7 @@ class Server(
             "C:\\Games\\Kotlin Code\\University\\OS\\Fifth_semester\\Labwork_first\\out\\artifacts\\Client" + "\\" + "Client.jar",
             address.hostName,
             address.port.toString(),
-            type,
+            valueType,
             function,
             testCase.toString()
         )
@@ -95,28 +95,25 @@ class Server(
             println("(a) continue")
             println("(b) continue without prompt")
             println("(c) cancel")
-            var correct = false
-            while (!correct) {
-                var line = reader.readLine()
-                line = line.toLowerCase()
-                correct = true
-                lastPromptTime = System.currentTimeMillis()
-                when (line) {
+            while (true) {
+                when (val line = reader.readLine().toLowerCase()) {
                     "a" -> {
                         lastPromptTime = System.currentTimeMillis()
-                        println("Continue")
+                        println("Continue\n")
+                        break
                     }
                     "b" -> {
                         promptEnabled = false
-                        println("Prompt disabled")
+                        println("Prompt disabled\n")
+                        break
                     }
-                    "c", "q" -> {
+                    "c" -> {
                         calculationsEnabled = false
-                        println("Canceled")
+                        println("Canceled\n")
+                        break
                     }
                     else -> {
-                        correct = false
-                        println("Incorrect response: $line")
+                        println("Incorrect response: $line\n")
                     }
                 }
             }
@@ -125,7 +122,7 @@ class Server(
 
     fun quit() {
         killClientProcesses()
-        stop()
+        stopServer()
         System.out.flush()
         exitProcess(0)
     }
@@ -136,7 +133,7 @@ class Server(
         }
     }
 
-    private fun stop() {
+    private fun stopServer() {
         try {
             server.close()
             reader.close()
@@ -158,7 +155,7 @@ class Server(
         if (value == 0.0) calculationsEnabled = false
     }
 
-    fun getConjunction(): Double? {
+    fun times(): Double? {
         if (results.getOrDefault("f", 1.0) == 0.0 || results.getOrDefault("g", 1.0) == 0.0)
             return 0.0
         else if (results.getOrDefault("f", 1.0) == 1.0 || results.getOrDefault("g", 1.0) == 1.0)

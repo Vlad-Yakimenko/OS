@@ -138,3 +138,35 @@ private fun parseDoubleFunction(arg: String): Boolean {
 
     return true
 }
+
+/**
+ * Custom functions
+ */
+object Util {
+
+    val funcF: Function<Int, Int> = Function { i ->
+        when (i) {
+            0 -> (Math.random() % 10).toInt()
+            1 -> (Math.random() % 20).toInt()
+            2, 3 -> 0
+            4, 5 -> {
+                Thread.sleep(2000)
+                5
+            }
+            else -> 0
+        }
+    }
+
+    val funcG: Function<Int, Int> = Function { i ->
+        when (i) {
+            0, 1 -> {
+                Thread.sleep(5000)
+                (Math.random() % 80).toInt()
+            }
+            2 -> (Math.random() % 50).toInt()
+            3 -> 0
+            4, 5 -> 25
+            else -> 0
+        }
+    }
+}

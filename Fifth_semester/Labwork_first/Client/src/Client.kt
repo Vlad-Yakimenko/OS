@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter
 import java.io.Writer
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.util.*
 import java.util.function.Function
 import kotlin.system.exitProcess
 
@@ -114,6 +115,16 @@ private fun parseIntFunction(arg: String): Boolean {
     return true
 }
 
+//private fun parseIntFunction(arg: String): Boolean {
+//    function = when (arg) {
+//        "f" -> Util.funcF
+//        "g" -> Util.funcG
+//        else -> return false
+//    }
+//
+//    return true
+//}
+
 private fun parseDoubleFunction(arg: String): Boolean {
 
     function = when (arg) {
@@ -144,10 +155,11 @@ private fun parseDoubleFunction(arg: String): Boolean {
  */
 object Util {
 
-    val funcF: Function<Int, Int> = Function { i ->
+    val funcF: Function<Int, Any> = Function { i ->
+        val random = Random()
         when (i) {
-            0 -> (Math.random() % 10).toInt()
-            1 -> (Math.random() % 20).toInt()
+            0 -> random.nextInt(10)
+            1 -> random.nextInt(20)
             2, 3 -> 0
             4, 5 -> {
                 Thread.sleep(2000)
@@ -157,13 +169,14 @@ object Util {
         }
     }
 
-    val funcG: Function<Int, Int> = Function { i ->
+    val funcG: Function<Int, Any> = Function { i ->
+        val random = Random()
         when (i) {
             0, 1 -> {
                 Thread.sleep(5000)
-                (Math.random() % 80).toInt()
+                random.nextInt(80)
             }
-            2 -> (Math.random() % 50).toInt()
+            2 -> random.nextInt(50)
             3 -> 0
             4, 5 -> 25
             else -> 0

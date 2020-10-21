@@ -27,7 +27,8 @@ fun main(args: Array<String>) {
     val manager = Server(host = "localhost", port = 1052, valueType = "int", testCase, promptEnabled = true)
 
     Signal.handle(Signal("INT")) {
-        println("Cancelled by user")
+        println("\nCancelled by user")
+        printResults(manager)
         exitProcess(-2)
     }
 

@@ -2,7 +2,7 @@ import java.util.concurrent.locks.Lock
 
 interface FixnumLockable : Lock {
 
-    fun getID(): Int?
+    fun getId(): Int
 
     fun registerThread(): Boolean
 

@@ -1,17 +1,16 @@
 abstract class FixnumLock(threadsAmount: Int) : FixnumLockable {
 
     private val threadsId: LongArray = LongArray(threadsAmount)
-    private val size = threadsAmount
 
     init {
         reset()
     }
 
     @Synchronized
-    override fun getID(): Int {
+    override fun getId(): Int {
         val id = Thread.currentThread().id
 
-        for (i in 0 until size) {
+        for (i in threadsId.indices) {
             if (threadsId[i] == id) {
                 return i
             }
@@ -27,7 +26,7 @@ abstract class FixnumLock(threadsAmount: Int) : FixnumLockable {
 
     @Synchronized
     override fun registerThread(id: Long): Boolean {
-        for (i in 0 until size) {
+        for (i in threadsId.indices) {
             if (threadsId[i] <= 0) {
                 threadsId[i] = id
                 return true
@@ -44,7 +43,7 @@ abstract class FixnumLock(threadsAmount: Int) : FixnumLockable {
 
     @Synchronized
     override fun unregisterThread(id: Long): Boolean {
-        for (i in 0 until size) {
+        for (i in threadsId.indices) {
             if (threadsId[i] == id) {
                 threadsId[i] = -1
                 return true
@@ -56,7 +55,7 @@ abstract class FixnumLock(threadsAmount: Int) : FixnumLockable {
 
     @Synchronized
     final override fun reset() {
-        for (i in 0 until size) {
+        for (i in threadsId.indices) {
             threadsId[i] = -1
         }
     }

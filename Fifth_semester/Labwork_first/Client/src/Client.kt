@@ -158,12 +158,28 @@ object Util {
     val funcF: Function<Int, Any> = Function { i ->
         val random = Random()
         when (i) {
-            0 -> random.nextInt(10)
-            1 -> random.nextInt(20)
-            2, 3 -> 0
-            4, 5 -> {
+            0 -> {
+                Thread.sleep(3000)
+                random.nextInt(10) + 1
+            }
+            1 -> {
+                Thread.sleep(5000)
+                random.nextInt(20) + 1
+            }
+            2 -> 0
+            3 -> {
+                while (true) {
+                    Thread.sleep(5000)
+                }
+            }
+            4 -> {
                 Thread.sleep(2000)
                 5
+            }
+            5 -> {
+                while (true) {
+                    Thread.sleep(5000)
+                }
             }
             else -> 0
         }
@@ -172,13 +188,23 @@ object Util {
     val funcG: Function<Int, Any> = Function { i ->
         val random = Random()
         when (i) {
-            0, 1 -> {
+            0 -> {
                 Thread.sleep(5000)
-                random.nextInt(80)
+                random.nextInt(80) + 1
             }
-            2 -> random.nextInt(50)
+            1 -> random.nextInt(10) + 1
+            2 -> {
+                while (true) {
+                    Thread.sleep(5000)
+                }
+            }
             3 -> 0
-            4, 5 -> 25
+            4 -> {
+                while (true) {
+                    Thread.sleep(5000)
+                }
+            }
+            5 -> 1
             else -> 0
         }
     }

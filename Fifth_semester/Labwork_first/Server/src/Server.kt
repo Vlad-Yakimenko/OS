@@ -74,7 +74,7 @@ class Server(
         val clientBuilder = ProcessBuilder(
             "java",
             "-jar",
-            "C:\\Games\\Kotlin Code\\University\\OS\\Fifth_semester\\Labwork_first\\out\\artifacts\\Client" + "\\" + "Client.jar",
+            "..\\Client" + "\\" + "Client.jar",
             address.hostName,
             address.port.toString(),
             valueType,

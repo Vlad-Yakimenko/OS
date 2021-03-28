@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+    <artifact type="jar" name="Client">
+        <output-path>$PROJECT_DIR$/out/artifacts/Client</output-path>
+        <root id="archive" name="Client.jar">
+            <element id="module-output" name="Client" />
+            <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.4.10/ea29e063d2bbe695be13e9d044dcfb0c7add398e/kotlin-stdlib-1.4.10.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.4.10/ea29e063d2bbe695be13e9d044dcfb0c7add398e/kotlin-stdlib.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.4.10/ea29e063d2bbe695be13e9d044dcfb0c7add398e/kotlin-reflect.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.4.10/ea29e063d2bbe695be13e9d044dcfb0c7add398e/kotlin-test.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.4.10/ea29e063d2bbe695be13e9d044dcfb0c7add398e/kotlin-stdlib-jdk7.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.4.10/ea29e063d2bbe695be13e9d044dcfb0c7add398e/kotlin-stdlib-jdk8.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Client/lib/lab1.jar" path-in-jar="/" />
+        </root>
+    </artifact>
+</component>

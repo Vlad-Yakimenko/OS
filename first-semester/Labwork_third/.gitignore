@@ -4,9 +4,8 @@
 
 # IntelliJ project files
 .gradle
-.idea
-build
+.idea/sonarlint
+.idea/workspace.xml
 out/production
-*.iml
 gen
 

@@ -8,4 +8,7 @@ public interface Disk {
 
     // WriteBlock write block with id blockID
     public void WriteBlock(byte[] block, int blockID);
+
+    public int BlockSize();
+    public int BlockNumber();
 }

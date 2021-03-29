@@ -64,4 +64,14 @@ public class FileDisk implements Disk {
             err.printStackTrace();
         }
     }
+
+    @Override
+    public int BlockSize() {
+        return blockSize;
+    }
+
+    @Override
+    public int BlockNumber() {
+        return blockNumber;
+    }
 }

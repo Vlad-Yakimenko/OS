@@ -8,7 +8,7 @@ public class Bitmap extends FSElement {
     Manipulator manipulator;
 
     public Bitmap() {
-        size = 2;
+        size = 8;
         map = 0;
         manipulator = new ByteManipulator();
     }
@@ -19,6 +19,18 @@ public class Bitmap extends FSElement {
         map += manipulator.ReadInt(data, pos + 4);
         
         return this;
+    }
+    
+    public boolean Check(int pos) {
+        return (map & (((long) 1) << pos)) != 0;
+    }
+
+    public void Set(int pos) {
+        map = (map | (((long) 1) << pos));
+    }
+    
+    public void Reset(int pos) {
+        map = (map & (~(((long) 1) << pos)));
     }
 
     public void Marshal(byte[] data, int pos) {

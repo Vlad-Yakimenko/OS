@@ -22,7 +22,7 @@ public class DiskInitializer {
                 if (currentPos + desc.Size() >= disk.BlockSize()) {
                     break;
                 }
-
+                
                 desc.Marshal(row, currentPos);
                 currentPos += desc.Size();
             }

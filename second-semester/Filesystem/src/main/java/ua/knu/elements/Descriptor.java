@@ -9,7 +9,7 @@ public class Descriptor extends FSElement {
     Manipulator manipulator;
 
     public Descriptor() {
-        size = 4;
+        size = 16;
         blocks = new int[3];
         length = 0;
         manipulator = new ByteManipulator();

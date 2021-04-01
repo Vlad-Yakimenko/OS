@@ -9,7 +9,7 @@ public class Entry extends FSElement {
     Manipulator manipulator;
 
     public Entry() {
-        size = 2;
+        size = 8;
         name = 0;
         descriptorID = 0;
         manipulator = new ByteManipulator();

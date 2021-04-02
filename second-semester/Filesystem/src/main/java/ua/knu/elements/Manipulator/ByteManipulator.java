@@ -6,8 +6,8 @@ public class ByteManipulator implements Manipulator {
         int result = 0;
 
         for (int i = 0; i < 4; i++) {
-            i += (int) data[pos + i];
-            i = i << 8;
+            result = result << 8;
+            result += (int) data[pos + i];
         }
 
         return result;
@@ -16,7 +16,7 @@ public class ByteManipulator implements Manipulator {
     @Override
     public void WriteInt(byte[] data, int pos, int value) {
         for (int i = 0; i < 4; i++) {
-            data[pos + i] = (byte) (i >> (24 - i * 8));
+            data[pos + i] = (byte) (value >> (24 - i * 8));
         }
     }
 }

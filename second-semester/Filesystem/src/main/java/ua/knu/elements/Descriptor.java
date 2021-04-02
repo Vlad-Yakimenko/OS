@@ -20,7 +20,7 @@ public class Descriptor extends FSElement {
         length = manipulator.ReadInt(data, pos);
         
         for (int i = 0; i < 3; i++) {
-            blocks[i] = manipulator.ReadInt(data, pos + 4 * i);
+            blocks[i] = manipulator.ReadInt(data, pos + 4 * (i + 1));
         }
 
         return this;
@@ -30,7 +30,7 @@ public class Descriptor extends FSElement {
         manipulator.WriteInt(data, pos, length);
 
         for (int i = 0; i < 3; i++) {
-            manipulator.WriteInt(data, pos + 4 * i, blocks[i]);
+            manipulator.WriteInt(data, pos + 4 * (i + 1), blocks[i]);
         }
     }
 

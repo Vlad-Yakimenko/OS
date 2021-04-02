@@ -9,6 +9,11 @@ public class DiskInitializer {
 
         byte[] row = disk.ReadBlock(0);
         Bitmap bm = new Bitmap();
+
+        for (int i = 0; i < 7; i++) {
+            bm.Set(i);
+        }
+        
         bm.Marshal(row, 0);
         disk.WriteBlock(row, 0);
         
@@ -17,12 +22,13 @@ public class DiskInitializer {
 
             int currentPos = 0;
             
-            while (currentPos < disk.BlockSize()) {
-                Descriptor desc = new Descriptor();
-                if (currentPos + desc.Size() >= disk.BlockSize()) {
-                    break;
+            Descriptor desc = new Descriptor();
+            while (currentPos + desc.Size() <= disk.BlockSize()) {
+
+                if (blockID != 1 || currentPos != 0) {
+                    desc.SetLength(-1);
                 }
-                
+
                 desc.Marshal(row, currentPos);
                 currentPos += desc.Size();
             }

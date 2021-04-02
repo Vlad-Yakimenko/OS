@@ -3,6 +3,7 @@ package ua.knu.elements;
 import ua.knu.elements.Manipulator.ByteManipulator;
 import ua.knu.elements.Manipulator.Manipulator;
 
+// Bitmap represents bitmap
 public class Bitmap extends FSElement {
     protected long map;
     Manipulator manipulator;

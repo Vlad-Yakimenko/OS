@@ -3,12 +3,13 @@ package ua.knu.elements;
 import ua.knu.elements.Manipulator.ByteManipulator;
 import ua.knu.elements.Manipulator.Manipulator;
 
-public class Entry extends FSElement {
+// DirectoryEntry represents directory entry
+public class DirectoryEntry extends FSElement {
     private int name;
     private int descriptorID;
     Manipulator manipulator;
 
-    public Entry() {
+    public DirectoryEntry() {
         size = 8;
         name = 0;
         descriptorID = 0;

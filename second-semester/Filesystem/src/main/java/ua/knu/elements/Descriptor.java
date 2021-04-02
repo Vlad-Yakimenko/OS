@@ -3,6 +3,7 @@ package ua.knu.elements;
 import ua.knu.elements.Manipulator.ByteManipulator;
 import ua.knu.elements.Manipulator.Manipulator;
 
+//Descriptor represents file descroptor
 public class Descriptor extends FSElement {
     private int length;
     private int[] blocks;

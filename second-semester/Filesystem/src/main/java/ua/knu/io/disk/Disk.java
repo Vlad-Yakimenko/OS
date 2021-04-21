@@ -3,12 +3,12 @@ package ua.knu.io.disk;
 // Disk interface
 public interface Disk {
 
-    // ReadBlock read block with id blockID
-    public byte[] ReadBlock(int blockID);
+    // readBlock read block with id blockID
+    public byte[] readBlock(int blockID);
 
-    // WriteBlock write block with id blockID
-    public void WriteBlock(byte[] block, int blockID);
+    // writeBlock write block with id blockID
+    public void writeBlock(byte[] block, int blockID);
 
-    public int BlockSize();
+    public int Blocksize();
     public int BlockNumber();
 }

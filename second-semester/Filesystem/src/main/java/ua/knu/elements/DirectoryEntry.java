@@ -16,31 +16,31 @@ public class DirectoryEntry extends FSElement {
         manipulator = new ByteManipulator();
     }
 
-    public FSElement Unmarshal(byte[] data, int pos) {
-        name = manipulator.ReadInt(data, pos);
-        descriptorID = manipulator.ReadInt(data, pos + 4);
+    public FSElement deserialize(byte[] data, int pos) {
+        name = manipulator.readInt(data, pos);
+        descriptorID = manipulator.readInt(data, pos + 4);
         
         return this;
     }
 
-    public void Marshal(byte[] data, int pos) {
-        manipulator.WriteInt(data, pos, name);
-        manipulator.WriteInt(data, pos + 4, descriptorID);
+    public void serialize(byte[] data, int pos) {
+        manipulator.writeInt(data, pos, name);
+        manipulator.writeInt(data, pos + 4, descriptorID);
     }
 
-    public void SetDescriptorID(int id) {
+    public void setDescriptorID(int id) {
         descriptorID = id;
     }
     
-    public int GetDescriptorID() {
+    public int getDescriptorID() {
         return descriptorID;
     }
 
-    public void SetName(int name) {
+    public void setName(int name) {
         this.name = name;
     }
     
-    public int GetName() {
+    public int getName() {
         return name;
     }
 }

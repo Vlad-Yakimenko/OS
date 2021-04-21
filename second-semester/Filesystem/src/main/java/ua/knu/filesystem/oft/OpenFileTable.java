@@ -13,27 +13,27 @@ class OFTEntry {
     private int currentPosition;
     private int descriptorPosition;
 
-    public int GetCurrentPosition() {
+    public int getCurrentPosition() {
         return currentPosition;
     }
     
-    public int GetDescriptorPosition() {
+    public int getDescriptorPosition() {
         return descriptorPosition;
     }
     
-    public byte[] GetBlock() {
+    public byte[] getBlock() {
         return block;
     }
 
-    public void SetCurrentPosition(int pos) {
+    public void setCurrentPosition(int pos) {
         currentPosition = pos;
     }
     
-    public void SetDescriptorPosition(int pos) {
+    public void setDescriptorPosition(int pos) {
         descriptorPosition = pos;
     }
     
-    public void SetBlock(byte[] b) {
+    public void setBlock(byte[] b) {
         block = b;
     }
 }
@@ -65,59 +65,59 @@ public class OpenFileTable implements OFTInterface {
 
         // Load directory
         empty.set(0, new Boolean(true));
-        entries.get(0).SetDescriptorPosition(0);
+        entries.get(0).setDescriptorPosition(0);
 
-        // Get directory descriptor
-        Descriptor directoryDescriptor = GetDescriptorByID(0);
+        // get directory descriptor
+        Descriptor directoryDescriptor = getDescriptorByID(0);
         // Load first block of directory
-        if (directoryDescriptor.GetBlocks()[0] != 0) {
-            entries.get(0).SetBlock(disk.ReadBlock(directoryDescriptor.GetBlocks()[0]));
+        if (directoryDescriptor.getBlocks()[0] != 0) {
+            entries.get(0).setBlock(disk.readBlock(directoryDescriptor.getBlocks()[0]));
         }
     }
 
     @Override
-    public int Open(int filename) {
+    public int open(int filename) {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 
         // Iterate over all block pointers in direcotry descriptor
-        for (int i = 0; i < GetMaxDescriptorBlockNumber(0); i++) {
+        for (int i = 0; i < getMaxDescriptorBlockNumber(0); i++) {
 
             // Load next block
-            byte[] data = LoadBlock(0, i);
+            byte[] data = loadBlock(0, i);
             if (data == null) {
                 return -1;
             }
 
             // Iterate over block to find directory entry with same name
             int currentPosition = 0;
-            while (currentPosition + entry.Size() <= disk.BlockSize()) {
-                entry.Unmarshal(data, currentPosition);
-                currentPosition += entry.Size();
+            while (currentPosition + entry.size() <= disk.Blocksize()) {
+                entry.deserialize(data, currentPosition);
+                currentPosition += entry.size();
 
                 // Found one
-                if (entry.GetName() == filename) {
+                if (entry.getName() == filename) {
                     // Reset directory OFT entry, beacause we iterated over it!
-                    LoadBlock(0, 0);
+                    loadBlock(0, 0);
                     
-                    int block = entry.GetDescriptorID() / (disk.BlockSize() / desc.Size()) + 1;
-                    int offset = entry.GetDescriptorID() % (disk.BlockSize() / desc.Size());
+                    int block = entry.getDescriptorID() / (disk.Blocksize() / desc.size()) + 1;
+                    int offset = entry.getDescriptorID() % (disk.Blocksize() / desc.size());
 
-                    data = disk.ReadBlock(block);
-                    desc.Unmarshal(data, offset * desc.Size());
+                    data = disk.readBlock(block);
+                    desc.deserialize(data, offset * desc.size());
 
                     // Find free OTF entry
                     for (int entryID = 0; entryID < MaxNumEntries; entryID++) {
                         if (empty.get(entryID)) {
                             // Load file data
                             empty.set(entryID, new Boolean(false));
-                            entries.get(entryID).SetCurrentPosition(0);
-                            entries.get(entryID).SetDescriptorPosition(entry.GetDescriptorID());
+                            entries.get(entryID).setCurrentPosition(0);
+                            entries.get(entryID).setDescriptorPosition(entry.getDescriptorID());
 
-                            if (desc.GetBlocks()[0] != 0) {
-                                entries.get(entryID).SetBlock(disk.ReadBlock(desc.GetBlocks()[0]));
+                            if (desc.getBlocks()[0] != 0) {
+                                entries.get(entryID).setBlock(disk.readBlock(desc.getBlocks()[0]));
                             } else {
-                                entries.get(entryID).SetBlock(null);
+                                entries.get(entryID).setBlock(null);
                             }
 
                             return entryID;
@@ -133,71 +133,71 @@ public class OpenFileTable implements OFTInterface {
     }
 
     @Override
-    public int Close(int id) {
-        StoreBlock(id);
+    public int close(int id) {
+        storeBlock(id);
         empty.set(id, new Boolean(true));
 
         return 0;
     }
 
     @Override
-    public Descriptor GetDescriptorByID(int id) {
+    public Descriptor getDescriptorByID(int id) {
         Descriptor desc = new Descriptor();
 
-        int descriptorID = entries.get(id).GetDescriptorPosition();
+        int descriptorID = entries.get(id).getDescriptorPosition();
 
-        int block = descriptorID / (disk.BlockSize() / desc.Size()) + 1;
-        int offset = descriptorID % (disk.BlockSize() / desc.Size());
+        int block = descriptorID / (disk.Blocksize() / desc.size()) + 1;
+        int offset = descriptorID % (disk.Blocksize() / desc.size());
 
-        byte[] data = disk.ReadBlock(block);
-        desc.Unmarshal(data, offset * desc.Size());
+        byte[] data = disk.readBlock(block);
+        desc.deserialize(data, offset * desc.size());
 
         return desc;
     }
 
     @Override
-    public void SetDescriptorByID(int id, Descriptor desc) {
-        int descriptorID = entries.get(id).GetDescriptorPosition();
+    public void setDescriptorByID(int id, Descriptor desc) {
+        int descriptorID = entries.get(id).getDescriptorPosition();
 
-        int block = descriptorID / (disk.BlockSize() / desc.Size()) + 1;
-        int offset = descriptorID % (disk.BlockSize() / desc.Size());
+        int block = descriptorID / (disk.Blocksize() / desc.size()) + 1;
+        int offset = descriptorID % (disk.Blocksize() / desc.size());
 
-        byte[] data = disk.ReadBlock(block);
-        desc.Marshal(data, offset * desc.Size());
-        disk.WriteBlock(data, block);
+        byte[] data = disk.readBlock(block);
+        desc.serialize(data, offset * desc.size());
+        disk.writeBlock(data, block);
     }
 
     @Override
-    public int GetMaxDescriptorBlockNumber(int id) {
+    public int getMaxDescriptorBlockNumber(int id) {
         return 3;
     }
 
     @Override
-    public byte[] LoadBlock(int id, int block) {
-        Descriptor desc = GetDescriptorByID(id);
-        if (desc.GetBlocks()[block] <= 0) {
+    public byte[] loadBlock(int id, int block) {
+        Descriptor desc = getDescriptorByID(id);
+        if (desc.getBlocks()[block] <= 0) {
             return null;
         }
 
-        byte[] data = disk.ReadBlock(desc.GetBlocks()[block]);
+        byte[] data = disk.readBlock(desc.getBlocks()[block]);
 
-        entries.get(id).SetBlock(data);
-        entries.get(id).SetCurrentPosition(disk.BlockSize() * block);
+        entries.get(id).setBlock(data);
+        entries.get(id).setCurrentPosition(disk.Blocksize() * block);
 
         return data;
     }
 
     @Override
-    public void StoreBlock(int id) {
-        Descriptor desc = GetDescriptorByID(id);
-        int blockInDescriptor = entries.get(id).GetCurrentPosition() / disk.BlockSize();
-        int blockID = desc.GetBlocks()[blockInDescriptor];
+    public void storeBlock(int id) {
+        Descriptor desc = getDescriptorByID(id);
+        int blockInDescriptor = entries.get(id).getCurrentPosition() / disk.Blocksize();
+        int blockID = desc.getBlocks()[blockInDescriptor];
 
-        byte[] data = entries.get(id).GetBlock();
-        disk.WriteBlock(data, blockID);
+        byte[] data = entries.get(id).getBlock();
+        disk.writeBlock(data, blockID);
     }
 
-    public Disk GetDisk() {
+    public Disk getDisk() {
         return disk;
     }
 }

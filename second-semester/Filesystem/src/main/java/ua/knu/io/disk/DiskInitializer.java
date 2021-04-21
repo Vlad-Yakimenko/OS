@@ -7,33 +7,33 @@ public class DiskInitializer {
         FileDisk disk = new FileDisk("disk.bin", 64, 64);
         disk.Init();
 
-        byte[] row = disk.ReadBlock(0);
+        byte[] row = disk.readBlock(0);
         Bitmap bm = new Bitmap();
 
         for (int i = 0; i < 7; i++) {
-            bm.Set(i);
+            bm.set(i);
         }
         
-        bm.Marshal(row, 0);
-        disk.WriteBlock(row, 0);
+        bm.serialize(row, 0);
+        disk.writeBlock(row, 0);
         
         for (int blockID = 1; blockID < 7; blockID++) {
-            row = disk.ReadBlock(blockID);
+            row = disk.readBlock(blockID);
 
             int currentPos = 0;
             
             Descriptor desc = new Descriptor();
-            while (currentPos + desc.Size() <= disk.BlockSize()) {
+            while (currentPos + desc.size() <= disk.Blocksize()) {
 
                 if (blockID != 1 || currentPos != 0) {
-                    desc.SetLength(-1);
+                    desc.setLength(-1);
                 }
 
-                desc.Marshal(row, currentPos);
-                currentPos += desc.Size();
+                desc.serialize(row, currentPos);
+                currentPos += desc.size();
             }
 
-            disk.WriteBlock(row, blockID);
+            disk.writeBlock(row, blockID);
         }
 
 

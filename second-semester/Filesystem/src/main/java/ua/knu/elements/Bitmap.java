@@ -1,9 +1,13 @@
 package ua.knu.elements;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ua.knu.elements.Manipulator.ByteManipulator;
 import ua.knu.elements.Manipulator.Manipulator;
 
 // Bitmap represents bitmap
+@Data
+@EqualsAndHashCode(callSuper=true)
 public class Bitmap extends FSElement {
     protected long map;
     Manipulator manipulator;
@@ -40,9 +44,9 @@ public class Bitmap extends FSElement {
     // Return index of free element
     // Return -1 when there are no free elements left
     public int nextFree() {
-        for (int i = 7; i < 64; i++) {
-            if (!check(i)) {
-                return i;
+        for (int block = 7; block < 64; block++) {
+            if (!check(block)) {
+                return block;
             }
         }
 
@@ -52,13 +56,5 @@ public class Bitmap extends FSElement {
     public void serialize(byte[] data, int pos) {
         manipulator.writeInt(data, pos, (int) (map >> 32));
         manipulator.writeInt(data, pos + 4, (int) map);
-    }
-
-    public void setMap(long map) {
-        this.map = map;
-    }
-    
-    public long getMap() {
-        return map;
     }
 }

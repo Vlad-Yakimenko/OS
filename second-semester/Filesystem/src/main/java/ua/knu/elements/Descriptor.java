@@ -1,9 +1,13 @@
 package ua.knu.elements;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ua.knu.elements.Manipulator.ByteManipulator;
 import ua.knu.elements.Manipulator.Manipulator;
 
 //Descriptor represents file descroptor
+@Data
+@EqualsAndHashCode(callSuper=true)
 public class Descriptor extends FSElement {
     private int length;
     private int[] blocks;
@@ -22,8 +26,8 @@ public class Descriptor extends FSElement {
             length = -1;
         }
         
-        for (int i = 0; i < 3; i++) {
-            blocks[i] = manipulator.readInt(data, pos + 4 * (i + 1));
+        for (int blockID = 0; blockID < blocks.length; blockID++) {
+            blocks[blockID] = manipulator.readInt(data, pos + 4 * (blockID + 1));
         }
 
         return this;
@@ -32,24 +36,8 @@ public class Descriptor extends FSElement {
     public void serialize(byte[] data, int pos) {
         manipulator.writeInt(data, pos, length);
 
-        for (int i = 0; i < 3; i++) {
-            manipulator.writeInt(data, pos + 4 * (i + 1), blocks[i]);
+        for (int blockID = 0; blockID < blocks.length; blockID++) {
+            manipulator.writeInt(data, pos + 4 * (blockID + 1), blocks[blockID]);
         }
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-    
-    public int getLength() {
-        return length;
-    }
-
-    public void setBlocks(int[] blocks) {
-        this.blocks = blocks;
-    }
-    
-    public int[] getBlocks() {
-        return blocks;
     }
 }

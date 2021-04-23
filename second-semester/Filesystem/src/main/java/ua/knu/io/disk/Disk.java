@@ -9,6 +9,6 @@ public interface Disk {
     // writeBlock write block with id blockID
     public void writeBlock(byte[] block, int blockID);
 
-    public int Blocksize();
-    public int BlockNumber();
+    public int blockSize();
+    public int blockNumber();
 }

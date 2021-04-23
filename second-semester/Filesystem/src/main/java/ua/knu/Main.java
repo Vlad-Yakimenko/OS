@@ -1,15 +1,13 @@
 package ua.knu;
 
 import ua.knu.io.disk.DiskInitializer;
-import ua.knu.io.disk.FileDisk;
 import ua.knu.elements.Bitmap;
-import ua.knu.elements.Manipulator.ByteManipulator;
 import ua.knu.filesystem.FileManager;
 import ua.knu.io.disk.Disk;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        Disk disk = DiskInitializer.Initialize();
+        Disk disk = DiskInitializer.initialize();
 
         FileManager fm = new FileManager(disk);
 
@@ -75,5 +73,12 @@ public class Main {
 
        fm.create(9);
        fm.create(10);
+
+
+       fm.remove(7);
+       fm.remove(8);
+
+       fm.create(11);
+       fm.create(12);
     }
 }

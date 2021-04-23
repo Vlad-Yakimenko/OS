@@ -3,15 +3,15 @@ package ua.knu.io.disk;
 import ua.knu.elements.*;
 
 public class DiskInitializer {
-    public static Disk Initialize() {
+    public static Disk initialize() {
         FileDisk disk = new FileDisk("disk.bin", 64, 64);
-        disk.Init();
+        disk.init();
 
         byte[] row = disk.readBlock(0);
         Bitmap bm = new Bitmap();
 
-        for (int i = 0; i < 7; i++) {
-            bm.set(i);
+        for (int blockID = 0; blockID < 7; blockID++) {
+            bm.set(blockID);
         }
         
         bm.serialize(row, 0);
@@ -23,7 +23,7 @@ public class DiskInitializer {
             int currentPos = 0;
             
             Descriptor desc = new Descriptor();
-            while (currentPos + desc.size() <= disk.Blocksize()) {
+            while (currentPos + desc.size() <= disk.blockSize()) {
 
                 if (blockID != 1 || currentPos != 0) {
                     desc.setLength(-1);

@@ -51,7 +51,7 @@ public class FileDisk implements Disk {
         }
     }
 
-    public void Init() {
+    public void init() {
         try {
             diskFile.seek(0);
             byte[] out = new byte[blocksize];
@@ -66,12 +66,12 @@ public class FileDisk implements Disk {
     }
 
     @Override
-    public int Blocksize() {
+    public int blockSize() {
         return blocksize;
     }
 
     @Override
-    public int BlockNumber() {
+    public int blockNumber() {
         return blockNumber;
     }
 }

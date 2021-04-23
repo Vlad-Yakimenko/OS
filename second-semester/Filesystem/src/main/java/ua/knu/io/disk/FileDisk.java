@@ -5,17 +5,17 @@ import java.io.RandomAccessFile;
 
 // FileDisk use file to save FS 
 public class FileDisk implements Disk {
-    // Size of block in bytes
-    private int blockSize;
+    // size of block in bytes
+    private int blocksize;
 
     // Number of blocks in disks 
     private int blockNumber;
 
     private RandomAccessFile diskFile;
 
-    public FileDisk(String filename, int blockSize, int blockNumber) {
+    public FileDisk(String filename, int blocksize, int blockNumber) {
         this.blockNumber = blockNumber;
-        this.blockSize = blockSize;
+        this.blocksize = blocksize;
 
         try {
             diskFile = new RandomAccessFile(new File(filename), "rw");
@@ -25,11 +25,11 @@ public class FileDisk implements Disk {
     }
 
     @Override
-    public byte[] ReadBlock(int blockID) {
+    public byte[] readBlock(int blockID) {
         try {
-            byte[] block= new byte[blockSize];
+            byte[] block= new byte[blocksize];
 
-            diskFile.seek(blockID * blockSize);
+            diskFile.seek(blockID * blocksize);
             diskFile.read(block);
 
             return block;
@@ -41,9 +41,9 @@ public class FileDisk implements Disk {
     }
 
     @Override
-    public void WriteBlock(byte[] block, int blockID) {
+    public void writeBlock(byte[] block, int blockID) {
         try {
-            diskFile.seek(blockID * blockSize);
+            diskFile.seek(blockID * blocksize);
             diskFile.write(block);
 
         } catch (Exception err) {
@@ -51,13 +51,13 @@ public class FileDisk implements Disk {
         }
     }
 
-    public void Init() {
+    public void init() {
         try {
             diskFile.seek(0);
-            byte[] out = new byte[blockSize];
+            byte[] out = new byte[blocksize];
             
             for (int blockID = 0; blockID < blockNumber; blockID++) {
-                WriteBlock(out, blockID);
+                writeBlock(out, blockID);
             }
 
         } catch (Exception err) {
@@ -66,12 +66,12 @@ public class FileDisk implements Disk {
     }
 
     @Override
-    public int BlockSize() {
-        return blockSize;
+    public int blockSize() {
+        return blocksize;
     }
 
     @Override
-    public int BlockNumber() {
+    public int blockNumber() {
         return blockNumber;
     }
 }

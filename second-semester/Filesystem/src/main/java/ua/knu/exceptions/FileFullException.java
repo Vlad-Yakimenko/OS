@@ -1,4 +1,4 @@
-package ua.knu.errors;
+package ua.knu.exceptions;
 
 public class FileFullException extends Exception {
     public FileFullException(String err) {

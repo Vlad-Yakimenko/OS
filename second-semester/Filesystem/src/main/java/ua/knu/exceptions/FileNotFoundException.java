@@ -1,4 +1,4 @@
-package ua.knu.errors;
+package ua.knu.exceptions;
 
 public class FileNotFoundException extends Exception {
     public FileNotFoundException(String err) {

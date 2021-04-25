@@ -33,7 +33,7 @@ public class OpenFileTable implements OFTInterface {
         disk = d;
 
         // Load directory
-        empty.set(0, true);
+        empty.set(0, false);
         entries.get(0).setDescriptorPosition(0);
 
         // get directory descriptor
@@ -104,7 +104,7 @@ public class OpenFileTable implements OFTInterface {
     @Override
     public int close(int id) {
         storeBlock(id);
-        empty.set(id, false);
+        empty.set(id, true);
 
         return 0;
     }

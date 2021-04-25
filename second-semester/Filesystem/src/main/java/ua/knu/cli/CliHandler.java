@@ -20,7 +20,7 @@ public class CliHandler implements Runnable {
         this.view = view;
         this.commands = Arrays.asList(
                 new HelpCommand(view),
-                new ExitCommand(view)
+                new ExitCommand()
         );
     }
 

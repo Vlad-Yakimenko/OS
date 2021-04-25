@@ -3,8 +3,8 @@ package ua.knu.filesystem;
 import ua.knu.filesystem.oft.*;
 import ua.knu.io.disk.Disk;
 import ua.knu.elements.*;
-import ua.knu.errors.DirectoryEntryNotFoundException;
-import ua.knu.errors.DirectoryFullException;
+import ua.knu.exceptions.DirectoryEntryNotFoundException;
+import ua.knu.exceptions.DirectoryFullException;
 
 public class FileManager {
     OFTInterface oft;

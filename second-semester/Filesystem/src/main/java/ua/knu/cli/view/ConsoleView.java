@@ -3,7 +3,7 @@ package ua.knu.cli.view;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class Console implements View {
+public class ConsoleView implements View {
 
     @Override
     public void write(String message) {

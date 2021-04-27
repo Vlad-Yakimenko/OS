@@ -2,8 +2,8 @@ package ua.knu.elements;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ua.knu.elements.Manipulator.ByteManipulator;
-import ua.knu.elements.Manipulator.Manipulator;
+import ua.knu.elements.manipulator.ByteManipulator;
+import ua.knu.elements.manipulator.Manipulator;
 
 // DirectoryEntry represents directory entry
 @Data
@@ -11,7 +11,7 @@ import ua.knu.elements.Manipulator.Manipulator;
 public class DirectoryEntry extends FSElement {
     private int name;
     private int descriptorID;
-    Manipulator manipulator;
+    private final Manipulator manipulator;
 
     public DirectoryEntry() {
         size = 8;

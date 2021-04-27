@@ -2,15 +2,15 @@ package ua.knu.elements;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ua.knu.elements.Manipulator.ByteManipulator;
-import ua.knu.elements.Manipulator.Manipulator;
+import ua.knu.elements.manipulator.ByteManipulator;
+import ua.knu.elements.manipulator.Manipulator;
 
 // Bitmap represents bitmap
 @Data
 @EqualsAndHashCode(callSuper=true)
 public class Bitmap extends FSElement {
-    protected long map;
-    Manipulator manipulator;
+    private long map;
+    private final Manipulator manipulator;
 
     public Bitmap() {
         size = 8;

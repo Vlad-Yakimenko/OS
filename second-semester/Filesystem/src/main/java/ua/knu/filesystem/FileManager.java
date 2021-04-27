@@ -1,15 +1,17 @@
 package ua.knu.filesystem;
 
+import lombok.experimental.FieldDefaults;
 import ua.knu.filesystem.oft.*;
 import ua.knu.io.disk.Disk;
 import ua.knu.elements.*;
 import ua.knu.exceptions.DirectoryEntryNotFoundException;
 import ua.knu.exceptions.DirectoryFullException;
 
+@FieldDefaults(makeFinal = true)
 public class FileManager {
-    OFTInterface oft;
 
-    Disk disk;
+    private OftInterface oft;
+    private Disk disk;
 
     public FileManager(Disk disk) {
         oft = new OpenFileTable(disk);
@@ -43,7 +45,7 @@ public class FileManager {
             }
 
             int currentPosition = 0;
-            while (currentPosition + entry.size() <= oft.getDisk().blockSize()) {
+            while (currentPosition + entry.size() <= oft.getDisk().getBlockSize()) {
                 entry.deserialize(data, currentPosition);
 
                 // Found one
@@ -68,7 +70,7 @@ public class FileManager {
             byte[] descriptorsBlock = oft.getDisk().readBlock(fdb);
 
             int currentPosition = 0;
-            while (currentPosition + desc.size() <= oft.getDisk().blockSize()) {
+            while (currentPosition + desc.size() <= oft.getDisk().getBlockSize()) {
                 desc.deserialize(descriptorsBlock, currentPosition);
 
                 // Found one
@@ -95,7 +97,7 @@ public class FileManager {
             }
 
             int currentPosition = 0;
-            while (currentPosition + temp.size() <= oft.getDisk().blockSize()) {
+            while (currentPosition + temp.size() <= oft.getDisk().getBlockSize()) {
                 temp.deserialize(data, currentPosition);
 
                 if (absolutePos == id) {
@@ -123,8 +125,8 @@ public class FileManager {
         entry.setDescriptorID(descriptorID);
         descriptor.setLength(0);
 
-        int block = descriptorID / (disk.blockSize() / descriptor.size()) + 1;
-        int offset = descriptorID % (disk.blockSize() / descriptor.size());
+        int block = descriptorID / (disk.getBlockSize() / descriptor.size()) + 1;
+        int offset = descriptorID % (disk.getBlockSize() / descriptor.size());
         byte[] data = disk.readBlock(block);
         descriptor.serialize(data, offset * descriptor.size());
         disk.writeBlock(data, block);
@@ -140,7 +142,7 @@ public class FileManager {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 
-        // Iterate over all block pointers in direcotry descriptor
+        // Iterate over all block pointers in directory descriptor
         for (int blockNumber = 0; blockNumber < oft.getMaxDescriptorBlockNumber(0); blockNumber++) {
 
             // Load next block
@@ -151,15 +153,15 @@ public class FileManager {
 
             // Iterate over block to find entry with filename
             int currentPosition = 0;
-            while (currentPosition + entry.size() <= oft.getDisk().blockSize()) {
+            while (currentPosition + entry.size() <= oft.getDisk().getBlockSize()) {
                 entry.deserialize(data, currentPosition);
 
                 // Found one
                 if (entry.getName() == filename) {
                     int descriptionPos = entry.getDescriptorID();
 
-                    int block = descriptionPos / (oft.getDisk().blockSize() / desc.size()) + 1;
-                    int offset = descriptionPos % (oft.getDisk().blockSize() / desc.size());
+                    int block = descriptionPos / (oft.getDisk().getBlockSize() / desc.size()) + 1;
+                    int offset = descriptionPos % (oft.getDisk().getBlockSize() / desc.size());
                     
                     byte[] fdBlock = oft.getDisk().readBlock(block);
                     desc.setLength(-1);

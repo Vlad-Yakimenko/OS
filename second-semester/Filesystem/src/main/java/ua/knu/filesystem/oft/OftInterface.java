@@ -3,7 +3,7 @@ package ua.knu.filesystem.oft;
 import ua.knu.elements.*;
 import ua.knu.io.disk.Disk;
 
-public interface OFTInterface {
+public interface OftInterface {
     // Open file, must create OFT entry for open file
     // return -1, when cannot open file for some reasons
     public int open(int filename);

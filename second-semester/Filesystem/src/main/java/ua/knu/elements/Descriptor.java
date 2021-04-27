@@ -2,16 +2,16 @@ package ua.knu.elements;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ua.knu.elements.Manipulator.ByteManipulator;
-import ua.knu.elements.Manipulator.Manipulator;
+import ua.knu.elements.manipulator.ByteManipulator;
+import ua.knu.elements.manipulator.Manipulator;
 
-//Descriptor represents file descroptor
+//Descriptor represents file descriptor
 @Data
 @EqualsAndHashCode(callSuper=true)
 public class Descriptor extends FSElement {
     private int length;
     private int[] blocks;
-    Manipulator manipulator;
+    private final Manipulator manipulator;
 
     public Descriptor() {
         size = 16;

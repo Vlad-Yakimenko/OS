@@ -6,11 +6,16 @@ public class ExitCommand implements Command {
 
     @Override
     public boolean canProcess(String command) {
-        return command.equals("exit");
+        return command.equals("ex");
     }
 
     @Override
     public void process(String command) {
         throw new ExitException();
+    }
+
+    @Override
+    public String getCommandSample() {
+        return "ex";
     }
 }

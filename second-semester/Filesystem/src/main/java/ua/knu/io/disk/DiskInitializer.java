@@ -8,7 +8,7 @@ public class DiskInitializer {
     public static boolean isInitialized;
 
     public static Disk initialize() {
-        FileDisk disk = new FileDisk("disk.bin", 64, 64);
+        FileDisk disk = new FileDisk("src/main/resources/disk.bin", 64, 64);
         disk.init();
 
         byte[] row = disk.readBlock(0);

@@ -3,7 +3,7 @@ package ua.knu.filesystem.oft;
 import lombok.Data;
 
 @Data
-class OftEntry {
+public class OFTEntry {
     // This value can be null!
     private byte[] block;
     private int currentPosition;

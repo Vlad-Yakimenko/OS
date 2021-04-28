@@ -3,6 +3,7 @@ package ua.knu.filesystem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -61,7 +62,7 @@ public class FileManager implements IFileManager {
 
         OFTEntry oftEntry = oft.getEntryById(id);
 
-        if (count <= 0) {
+        if (count <= 0 || count > blockSize * oft.getMaxDescriptorBlockNumber(0)) {
             throw new ReadFileException("Count is out of range");
         }
 
@@ -74,23 +75,31 @@ public class FileManager implements IFileManager {
             // 0-63 64-127 128-191
             if ((currentBlockNumber * blockSize - 1) - currentPosition >= count) { // data in scope of currently loaded buffer
                 int newPosition = currentPosition + count;
+                byte[] block = oftEntry.getBlock();
+
+                if (block == null) {
+                    return readBytes;
+                }
+
                 readBytes = ArrayUtils.addAll(
                     readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
-                    currentPosition, newPosition)
+                    currentPosition % blockSize, newPosition % blockSize)
                 );
 
                 oftEntry.setCurrentPosition(newPosition);
                 break;
             }
+
             readBytes = ArrayUtils.addAll(
                 readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
-                currentPosition, oftEntry.getBlock().length)
+                currentPosition % blockSize, oftEntry.getBlock().length)
             );
 
-            count -= oftEntry.getBlock().length - currentPosition;
+            int amountOfReadBytes = oftEntry.getBlock().length - (currentPosition % blockSize);
+            count -= amountOfReadBytes;
 
             oft.storeBlock(id);
-            oft.loadBlock(id, currentBlockNumber + 1);
+            oft.loadBlock(id, currentBlockNumber);
         }
 
         return readBytes;

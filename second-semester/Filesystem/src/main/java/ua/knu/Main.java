@@ -62,17 +62,16 @@ public class Main {
         ArrayList<Pair<?, ?>> files = fm.directory();
         System.out.println(files);
 
-        String message = "aaaaa";
-        String message2 = "bbbbb";
+        fm.create(8);
 
-        int id = fm.open(1);
+        String message = "test0_test1_test2_test3_test4_test5_test6_test7_test8_test9_test10_test11_test12_test13_test14_test15_test16_LOL";
+        System.out.println("input message length: " + message.length());
+
+        int id = fm.open(8);
         fm.write(id, message);
-        fm.write(id, message2);
-
-        fm.seek(id, 2);
-
-        byte[] read = fm.read(id, 10);
-        System.out.println(new String(read, StandardCharsets.UTF_8));
+        fm.seek(id, 0);
+        byte[] data = fm.read(id, 65);
+        System.out.println(new String(data, StandardCharsets.UTF_8));
 
         fm.remove(4);
         System.out.println(fm.directory());

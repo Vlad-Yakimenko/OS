@@ -3,7 +3,6 @@ package ua.knu.filesystem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -147,6 +146,12 @@ public class FileManager implements IFileManager {
                 entry.deserialize(data, currentPosition);
                 int descriptorID = entry.getDescriptorID();
 
+                if (descriptorID == 0) { // deleted entry
+                    currentPosition += entry.size();
+                    fileCounter++;
+                    continue;
+                }
+
                 int block = descriptorID / (disk.blockSize() / desc.size()) + 1;
                 int offset = descriptorID % (disk.blockSize() / desc.size());
 
@@ -231,15 +236,23 @@ public class FileManager implements IFileManager {
 
                 // Found one
                 if (entry.getName() == filename) {
+                    byte[] zeroBlock = oft.getDisk().readBlock(0);
+                    Bitmap map = new Bitmap();
+                    map.deserialize(zeroBlock, 0);
+
                     int descriptionPos = entry.getDescriptorID();
 
                     int block = descriptionPos / (oft.getDisk().blockSize() / desc.size()) + 1;
                     int offset = descriptionPos % (oft.getDisk().blockSize() / desc.size());
 
                     byte[] fdBlock = oft.getDisk().readBlock(block);
+                    desc.deserialize(fdBlock, offset * desc.size());
                     desc.setLength(-1);
                     int[] descPtrs = desc.getBlocks();
                     for (int k = 0; k < descPtrs.length; k++) {
+                        if (descPtrs[k] > 0) {
+                            map.reset(descPtrs[k]);
+                        }
                         descPtrs[k] = 0;
                     }
                     desc.setBlocks(descPtrs);
@@ -255,6 +268,9 @@ public class FileManager implements IFileManager {
                     desc = oft.getDescriptorByID(0);
                     desc.setLength(desc.getLength() - 1);
                     oft.setDescriptorByID(0, desc);
+
+                    map.serialize(zeroBlock, 0);
+                    oft.getDisk().writeBlock(zeroBlock, 0);
                 }
 
                 currentPosition += entry.size();

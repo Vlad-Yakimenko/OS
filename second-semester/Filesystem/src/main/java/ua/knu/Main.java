@@ -34,6 +34,18 @@ public class Main {
 
        fm.create(4);
 
+        fm.create(5);
+
+        fm.create(6);
+
+        fm.create(7);
+
+        fm.create(8);
+
+        fm.create(9);
+
+        //fm.create(10);
+
        //int id = fm.open(2);
 
        //fm.seek(id, 0);
@@ -41,39 +53,28 @@ public class Main {
 
        //fm.directory();
 //
-//       fm.create(5);
-//
-//       fm.create(6);
-//
-//       fm.create(7);
-//
-//       fm.create(8);
-//
-//       fm.create(9);
-//
-//       fm.create(10);
-//
 //       fm.remove(7);
 //       fm.remove(8);
 //
 //       fm.create(11);
 //       fm.create(12);
 
-        ArrayList<Pair<?, ?>> files = fm.directory();
-        System.out.println(files);
-
-        fm.create(8);
-
-        String message = "test0_test1_test2_test3_test4_test5_test6_test7_test8_test9_test10_test11_test12_test13_test14_test15_test16_LOL";
-        System.out.println("input message length: " + message.length());
-
-        int id = fm.open(8);
-        fm.write(id, message);
-        fm.seek(id, 0);
-        byte[] data = fm.read(id, 65);
-        System.out.println(new String(data, StandardCharsets.UTF_8));
+        //fm.create(8);
+//
+//        System.out.println(fm.directory());
+//
+//        String message = "test0_test1_test2_test3_test4_test5_test6_test7_test8_test9_test10_test11_test12_test13_test14_test15_test16_LOL";
+//        System.out.println("input message length: " + message.length());
+//
+//        int id = fm.open(8);
+//        fm.write(id, message);
+//        fm.seek(id, 0);
+//        byte[] data = fm.read(id, 65);
+//        System.out.println(new String(data, StandardCharsets.UTF_8));
 
         fm.remove(4);
-        System.out.println(fm.directory());
+
+        ArrayList<Pair<?, ?>> files = fm.directory();
+        System.out.println(files);
     }
 }

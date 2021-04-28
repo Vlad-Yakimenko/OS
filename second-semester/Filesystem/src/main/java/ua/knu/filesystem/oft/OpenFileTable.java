@@ -7,10 +7,10 @@ import ua.knu.io.disk.Disk;
 import java.util.List;
 import java.util.ArrayList;
 
-// OpenFileTable (OFT) represents a tableof open files
+// OpenFileTable (OFT) represents a table of the open files
 // @note Directory must always be open
 // @note You should modify this class, and/or its interface
-public class OpenFileTable implements OFTInterface {
+public class OpenFileTable implements IOpenFileTable {
     // entries stores OFT entries
     List<OFTEntry> entries;
 
@@ -19,13 +19,13 @@ public class OpenFileTable implements OFTInterface {
     
     Disk disk;
     
-    int MaxNumEntries = 4;
+    int maxNumEntries = 4;
 
     public OpenFileTable(Disk d) {
-        entries = new ArrayList<>(MaxNumEntries);
-        empty = new ArrayList<>(MaxNumEntries);
+        entries = new ArrayList<>(maxNumEntries);
+        empty = new ArrayList<>(maxNumEntries);
 
-        for (int entryID = 0; entryID < MaxNumEntries; entryID++) {
+        for (int entryID = 0; entryID < maxNumEntries; entryID++) {
             entries.add(new OFTEntry());
             empty.add(true);
         }
@@ -36,7 +36,7 @@ public class OpenFileTable implements OFTInterface {
         empty.set(0, false);
         entries.get(0).setDescriptorPosition(0);
 
-        // get directory descriptor
+        // Get directory descriptor
         Descriptor directoryDescriptor = getDescriptorByID(0);
         // Load first block of directory
         if (directoryDescriptor.getBlocks()[0] != 0) {
@@ -45,11 +45,16 @@ public class OpenFileTable implements OFTInterface {
     }
 
     @Override
+    public int getMaxNumEntries() {
+        return maxNumEntries;
+    }
+
+    @Override
     public int open(int filename) {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 
-        // Iterate over all block pointers in direcotry descriptor
+        // Iterate over all block pointers in directory descriptor
         for (int blockNumber = 0; blockNumber < getMaxDescriptorBlockNumber(0); blockNumber++) {
 
             // Load next block
@@ -66,7 +71,7 @@ public class OpenFileTable implements OFTInterface {
 
                 // Found one
                 if (entry.getName() == filename) {
-                    // Reset directory OFT entry, beacause we iterated over it!
+                    // Reset directory OFT entry, because we iterated over it!
                     loadBlock(0, 0);
                     
                     int block = entry.getDescriptorID() / (disk.blockSize() / desc.size()) + 1;
@@ -76,7 +81,7 @@ public class OpenFileTable implements OFTInterface {
                     desc.deserialize(data, offset * desc.size());
 
                     // Find free OTF entry
-                    for (int entryID = 0; entryID < MaxNumEntries; entryID++) {
+                    for (int entryID = 0; entryID < maxNumEntries; entryID++) {
                         if (empty.get(entryID)) {
                             // Load file data
                             empty.set(entryID, false);
@@ -107,6 +112,11 @@ public class OpenFileTable implements OFTInterface {
         empty.set(id, true);
 
         return 0;
+    }
+
+    @Override
+    public OFTEntry getEntryById(int id) {
+        return entries.get(id);
     }
 
     @Override
@@ -145,6 +155,8 @@ public class OpenFileTable implements OFTInterface {
     public byte[] loadBlock(int id, int block) {
         Descriptor desc = getDescriptorByID(id);
         if (desc.getBlocks()[block] <= 0) {
+            entries.get(id).setBlock(null);
+            entries.get(id).setCurrentPosition(disk.blockSize() * block);
             return null;
         }
 

@@ -301,4 +301,53 @@ public class FileManager { //TODO: implement interface with all required methods
 
         throw new DirectoryFullException("Directory is full");
     }
+
+    public void write(int id, String str) throws FileFullException {
+        Descriptor file = oft.getDescriptorByID(id);
+        OFTEntry entry = ((OpenFileTable) oft).getEntry(id);
+
+        for (int symbolID = 0; symbolID < str.length(); symbolID++) {
+            if (entry.getCurrentPosition() != 0 && (entry.getCurrentPosition()) % oft.getDisk().blockSize() == 0) {
+                if ((entry.getCurrentPosition()) / oft.getDisk().blockSize() > 2) {
+                    oft.setDescriptorByID(id, file);
+                    oft.storeBlock(id);
+                    throw new FileFullException("File " + id + " is full");
+                }
+
+                entry.setCurrentPosition(entry.getCurrentPosition() - 1);
+                oft.storeBlock(id);
+                oft.setDescriptorByID(id, file);
+                oft.loadBlock(id, (entry.getCurrentPosition() + 1) / oft.getDisk().blockSize());
+                entry.setCurrentPosition(entry.getCurrentPosition() + 1);
+            }
+
+            if (entry.getBlock() == null) {
+                int blockNumber = entry.getCurrentPosition() / oft.getDisk().blockSize();
+                byte[] zeroBlock = oft.getDisk().readBlock(0);
+                Bitmap map = new Bitmap();
+                map.deserialize(zeroBlock, 0);
+
+                int freePos = map.nextFree();
+                map.set(freePos);
+                map.serialize(zeroBlock, 0);
+                oft.getDisk().writeBlock(zeroBlock, 0);
+
+                int[] ptrs = file.getBlocks();
+                ptrs[blockNumber] = freePos;
+                file.setBlocks(ptrs);
+                oft.setDescriptorByID(id, file);
+
+                oft.loadBlock(id, blockNumber);
+                entry = ((OpenFileTable) oft).getEntry(id);
+            }
+
+            byte[] block = entry.getBlock();
+            block[entry.getCurrentPosition() % oft.getDisk().blockSize()] = (byte) str.charAt(symbolID);
+            file.setLength(file.getLength() + 1);
+            entry.setCurrentPosition(entry.getCurrentPosition() + 1);
+        }
+
+        oft.setDescriptorByID(id, file);
+        oft.storeBlock(id);
+    }
 }

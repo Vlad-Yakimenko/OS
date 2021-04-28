@@ -60,5 +60,17 @@ public class Main {
 
         ArrayList<Pair<?, ?>> files = fm.directory();
         System.out.println(files);
+
+        fm.create(3);
+        fm.create(7);
+        fm.create(9);
+        int id = fm.open(3);
+        fm.write(id, "Hello, world!");
+        int id2 = fm.open(9);
+        fm.write(id2, "Hello, from 9!");
+        fm.write(id, " Update here");
+
+        int id3 = fm.open(7);
+        fm.write(id3, "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvs");
     }
 }

@@ -150,6 +150,8 @@ public class OpenFileTable implements IOpenFileTable {
     public byte[] loadBlock(int id, int block) {
         Descriptor desc = getDescriptorByID(id);
         if (desc.getBlocks()[block] <= 0) {
+            entries.get(id).setBlock(null);
+            entries.get(id).setCurrentPosition(disk.blockSize() * block);
             return null;
         }
 
@@ -173,5 +175,13 @@ public class OpenFileTable implements IOpenFileTable {
 
     public Disk getDisk() {
         return disk;
+    }
+
+    public OFTEntry getEntry(int id) {
+        return entries.get(id);
+    }
+
+    public void setEntry(int id, OFTEntry e) {
+        entries.set(id, e);
     }
 }

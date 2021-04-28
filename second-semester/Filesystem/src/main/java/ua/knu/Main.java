@@ -10,75 +10,17 @@ public class Main {
         Disk disk = DiskInitializer.initialize();
 
         FileManager fm = new FileManager(disk);
+        
+        fm.create(3);
+        fm.create(7);
+        fm.create(9);
+        int id = fm.oft.open(3);
+        fm.write(id, "Hello, world!");
+        int id2 = fm.oft.open(9);
+        fm.write(id2, "Hello, from 9!");
+        fm.write(id, " Update here");
 
-        byte[] block = disk.readBlock(0);
-        Bitmap bm = new Bitmap();
-        bm.deserialize(block, 0);
-        System.out.println(bm.getMap());
-
-        fm.create(1);
-
-        block = disk.readBlock(0);
-        bm.deserialize(block, 0);
-        System.out.println(bm.getMap());
-
-
-       fm.create(2);
-
-       block = disk.readBlock(0);
-       bm.deserialize(block, 0);
-       System.out.println(bm.getMap());
-
-       fm.create(3);
-
-       block = disk.readBlock(0);
-       bm.deserialize(block, 0);
-       System.out.println(bm.getMap());
-
-
-       fm.create(4);
-
-       block = disk.readBlock(0);
-       bm.deserialize(block, 0);
-       System.out.println(bm.getMap());
-
-
-       fm.create(5);
-
-       block = disk.readBlock(0);
-       bm.deserialize(block, 0);
-       System.out.println(bm.getMap());
-
-
-       fm.create(6);
-
-       block = disk.readBlock(0);
-       bm.deserialize(block, 0);
-       System.out.println(bm.getMap());
-
-
-       fm.create(7);
-
-       block = disk.readBlock(0);
-       bm.deserialize(block, 0);
-       System.out.println(bm.getMap());
-
-
-       fm.create(8);
-
-       block = disk.readBlock(0);
-       bm.deserialize(block, 0);
-       System.out.println(bm.getMap());
-
-
-       fm.create(9);
-       fm.create(10);
-
-
-       fm.remove(7);
-       fm.remove(8);
-
-       fm.create(11);
-       fm.create(12);
+        int id3 = fm.oft.open(7);
+        fm.write(id3, "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvs");
     }
 }

@@ -95,8 +95,8 @@ public class FileManagerImpl implements FileManager {
                 }
 
                 readBytes = ArrayUtils.addAll(
-                    readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
-                    currentPosition % blockSize, newPosition % blockSize)
+                        readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
+                                currentPosition % blockSize, newPosition % blockSize)
                 );
 
                 oftEntry.setCurrentPosition(newPosition);
@@ -104,8 +104,8 @@ public class FileManagerImpl implements FileManager {
             }
 
             readBytes = ArrayUtils.addAll(
-                readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
-                currentPosition % blockSize, oftEntry.getBlock().length)
+                    readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
+                            currentPosition % blockSize, oftEntry.getBlock().length)
             );
 
             int amountOfReadBytes = oftEntry.getBlock().length - (currentPosition % blockSize);
@@ -143,8 +143,8 @@ public class FileManagerImpl implements FileManager {
     }
 
     @Override
-    public List<Pair<?, ?>> directory() {
-        List<Pair<?, ?>> files = new ArrayList<>();
+    public List<Pair<Integer, Integer>> directory() {
+        List<Pair<Integer, Integer>> files = new ArrayList<>();
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 

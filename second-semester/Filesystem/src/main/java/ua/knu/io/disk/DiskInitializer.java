@@ -3,8 +3,11 @@ package ua.knu.io.disk;
 import ua.knu.elements.*;
 
 public class DiskInitializer {
+
+    public static boolean isInitialized;
+
     public static Disk initialize() {
-        FileDisk disk = new FileDisk("disk.bin", 64, 64);
+        FileDisk disk = new FileDisk("src/main/resources/disk.bin", 64, 64);
         disk.init();
 
         byte[] row = disk.readBlock(0);
@@ -23,7 +26,7 @@ public class DiskInitializer {
             int currentPos = 0;
             
             Descriptor desc = new Descriptor();
-            while (currentPos + desc.size() <= disk.blockSize()) {
+            while (currentPos + desc.size() <= disk.getBlockSize()) {
 
                 if (blockID != 1 || currentPos != 0) {
                     desc.setLength(-1);
@@ -36,6 +39,7 @@ public class DiskInitializer {
             disk.writeBlock(row, blockID);
         }
 
+        isInitialized = true;
         return disk;
     }
 }

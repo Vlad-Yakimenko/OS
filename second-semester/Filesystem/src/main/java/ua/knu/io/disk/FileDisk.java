@@ -1,11 +1,15 @@
 package ua.knu.io.disk;
 
+import lombok.Getter;
+
 import java.io.File;
 import java.io.RandomAccessFile;
 
-// FileDisk use file to save FS 
+// FileDisk use file to save FS
+@Getter
 public class FileDisk implements Disk {
-    // Size of block in bytes
+
+    // size of block in bytes
     private final int blockSize;
 
     // Number of blocks in disks 
@@ -29,7 +33,7 @@ public class FileDisk implements Disk {
         try {
             byte[] block= new byte[blockSize];
 
-            diskFile.seek(blockID * blockSize);
+            diskFile.seek((long) blockID * blockSize);
             diskFile.read(block);
 
             return block;
@@ -43,8 +47,9 @@ public class FileDisk implements Disk {
     @Override
     public void writeBlock(byte[] block, int blockID) {
         try {
-            diskFile.seek(blockID * blockSize);
+            diskFile.seek((long) blockID * blockSize);
             diskFile.write(block);
+
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -58,18 +63,9 @@ public class FileDisk implements Disk {
             for (int blockID = 0; blockID < blockNumber; blockID++) {
                 writeBlock(out, blockID);
             }
+
         } catch (Exception err) {
             err.printStackTrace();
         }
-    }
-
-    @Override
-    public int blockSize() {
-        return blockSize;
-    }
-
-    @Override
-    public int blockNumber() {
-        return blockNumber;
     }
 }

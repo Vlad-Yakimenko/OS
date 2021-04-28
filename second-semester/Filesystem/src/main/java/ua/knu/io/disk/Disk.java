@@ -6,7 +6,7 @@ public interface Disk {
 
     void writeBlock(byte[] block, int blockID); // writeBlock write block with id blockID
 
-    int blockSize();
+    int getBlockSize();
 
-    int blockNumber();
+    int getBlockNumber();
 }

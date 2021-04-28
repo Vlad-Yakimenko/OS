@@ -2,7 +2,7 @@ package ua.knu.cli.command;
 
 import ua.knu.exceptions.ExitException;
 
-public class ExitCommand implements Command {
+public class ExitCommand extends Command {
 
     @Override
     public boolean canProcess(String command) {

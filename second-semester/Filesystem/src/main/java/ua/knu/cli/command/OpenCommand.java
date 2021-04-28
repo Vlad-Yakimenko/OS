@@ -27,11 +27,8 @@ public class OpenCommand extends Command {
 
         String filename = parameters[1];
 
-        int index; // = openFileTable.open(filename)
+        int index = openFileTable.open(Integer.parseInt(filename));
 
-        index = 0; // till issue won't be fixed
-
-        // TODO int again?
         if (index < 0) {
             view.write("we can not open this file");
         } else {

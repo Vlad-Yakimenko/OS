@@ -28,7 +28,9 @@ public class CreateCommand extends Command {
         verifyCorrectParametersAmount(parameters.length);
 
         // TODO why int value as filename on FileManager abstraction level
-//         fileManager.create(parameters[1]);
+        String filename = parameters[1];
+        fileManager.create(Integer.parseInt(filename));
+        view.write(String.format("file %s created", filename));
     }
 
     @Override

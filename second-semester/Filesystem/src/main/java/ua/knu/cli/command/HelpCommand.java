@@ -6,7 +6,7 @@ import ua.knu.cli.view.View;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
-public class HelpCommand implements Command {
+public class HelpCommand extends Command {
 
     private View view;
 
@@ -20,5 +20,10 @@ public class HelpCommand implements Command {
         view.write("Commands:");
         view.write("\texit");
         view.write("\t\tFor exit");
+    }
+
+    @Override
+    public String getCommandSample() {
+        return "help";
     }
 }

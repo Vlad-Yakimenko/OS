@@ -5,17 +5,17 @@ import java.io.RandomAccessFile;
 
 // FileDisk use file to save FS 
 public class FileDisk implements Disk {
-    // size of block in bytes
-    private int blockSize;
+    // Size of block in bytes
+    private final int blockSize;
 
     // Number of blocks in disks 
-    private int blockNumber;
+    private final int blockNumber;
 
     private RandomAccessFile diskFile;
 
-    public FileDisk(String filename, int blocksize, int blockNumber) {
+    public FileDisk(String filename, int blockSize, int blockNumber) {
         this.blockNumber = blockNumber;
-        this.blockSize = blocksize;
+        this.blockSize = blockSize;
 
         try {
             diskFile = new RandomAccessFile(new File(filename), "rw");

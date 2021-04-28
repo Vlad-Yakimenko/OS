@@ -19,13 +19,13 @@ public class OpenFileTable implements IOpenFileTable {
     
     Disk disk;
     
-    int MaxNumEntries = 4;
+    int maxNumEntries = 4;
 
     public OpenFileTable(Disk d) {
-        entries = new ArrayList<>(MaxNumEntries);
-        empty = new ArrayList<>(MaxNumEntries);
+        entries = new ArrayList<>(maxNumEntries);
+        empty = new ArrayList<>(maxNumEntries);
 
-        for (int entryID = 0; entryID < MaxNumEntries; entryID++) {
+        for (int entryID = 0; entryID < maxNumEntries; entryID++) {
             entries.add(new OFTEntry());
             empty.add(true);
         }
@@ -45,11 +45,16 @@ public class OpenFileTable implements IOpenFileTable {
     }
 
     @Override
+    public int getMaxNumEntries() {
+        return maxNumEntries;
+    }
+
+    @Override
     public int open(int filename) {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 
-        // Iterate over all block pointers in direcotry descriptor
+        // Iterate over all block pointers in directory descriptor
         for (int blockNumber = 0; blockNumber < getMaxDescriptorBlockNumber(0); blockNumber++) {
 
             // Load next block
@@ -76,7 +81,7 @@ public class OpenFileTable implements IOpenFileTable {
                     desc.deserialize(data, offset * desc.size());
 
                     // Find free OTF entry
-                    for (int entryID = 0; entryID < MaxNumEntries; entryID++) {
+                    for (int entryID = 0; entryID < maxNumEntries; entryID++) {
                         if (empty.get(entryID)) {
                             // Load file data
                             empty.set(entryID, false);
@@ -175,13 +180,5 @@ public class OpenFileTable implements IOpenFileTable {
 
     public Disk getDisk() {
         return disk;
-    }
-
-    public OFTEntry getEntry(int id) {
-        return entries.get(id);
-    }
-
-    public void setEntry(int id, OFTEntry e) {
-        entries.set(id, e);
     }
 }

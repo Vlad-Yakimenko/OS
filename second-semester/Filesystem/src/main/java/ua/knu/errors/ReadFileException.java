@@ -1,9 +1,7 @@
 package ua.knu.errors;
 
 public class ReadFileException extends Exception {
-    public ReadFileException(String err) {
-        super(err);
+    public ReadFileException(String message) {
+        super(message);
     }
-
-    private static final long serialVersionUID = 1L;
 }

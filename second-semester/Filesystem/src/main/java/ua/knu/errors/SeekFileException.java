@@ -1,9 +1,7 @@
 package ua.knu.errors;
 
 public class SeekFileException extends Exception {
-    public SeekFileException(String err) {
-        super(err);
+    public SeekFileException(String message) {
+        super(message);
     }
-
-    private static final long serialVersionUID = 1L;
 }

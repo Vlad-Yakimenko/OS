@@ -2,6 +2,7 @@ package ua.knu.filesystem;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -10,7 +11,7 @@ import ua.knu.filesystem.oft.*;
 import ua.knu.io.disk.Disk;
 import ua.knu.elements.*;
 
-public class FileManager { //TODO: implement interface with all required methods
+public class FileManager implements IFileManager {
     IOpenFileTable oft;
     Disk disk;
 
@@ -27,7 +28,7 @@ public class FileManager { //TODO: implement interface with all required methods
         return oft.close(filename);
     }
 
-    public void create(int filename) throws DirectoryFullException, DirectoryEntryNotFoundException {
+    public void create(int filename) throws DirectoryException {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor descriptor = new Descriptor();
 
@@ -52,26 +53,25 @@ public class FileManager { //TODO: implement interface with all required methods
     }
 
     public byte[] read(int id, int count) throws ReadFileException {
-        int maxBlockNumber = oft.getMaxDescriptorBlockNumber(0);
         int blockSize = oft.getDisk().blockSize();
 
-        if (id < 0 || id > maxBlockNumber) {
+        if (id < 0 || id > oft.getMaxNumEntries() - 1) {
             throw new ReadFileException("Id is out of range");
         }
 
-        int endPos = oft.getDescriptorByID(id).getLength();
         OFTEntry oftEntry = oft.getEntryById(id);
 
-        if (count <= 0 || count > endPos - oftEntry.getCurrentPosition()) {
+        if (count <= 0) {
             throw new ReadFileException("Count is out of range");
         }
 
         byte[] readBytes = {};
 
-        while (true) { // 1 2 3
+        while (true) {
             int currentPosition = oftEntry.getCurrentPosition();
-            int currentBlockNumber = (currentPosition / blockSize) + 1; // 0-63 64-127 128-191
+            int currentBlockNumber = (currentPosition / blockSize) + 1; // 1 2 3
 
+            // 0-63 64-127 128-191
             if ((currentBlockNumber * blockSize - 1) - currentPosition >= count) { // data in scope of currently loaded buffer
                 int newPosition = currentPosition + count;
                 readBytes = ArrayUtils.addAll(
@@ -81,17 +81,16 @@ public class FileManager { //TODO: implement interface with all required methods
 
                 oftEntry.setCurrentPosition(newPosition);
                 break;
-            } else {
-                readBytes = ArrayUtils.addAll(
-                    readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
-                    currentPosition, oftEntry.getBlock().length)
-                );
-
-                count -= oftEntry.getBlock().length - currentPosition;
-
-                oft.storeBlock(id);
-                oft.loadBlock(id, currentBlockNumber + 1);
             }
+            readBytes = ArrayUtils.addAll(
+                readBytes, Arrays.copyOfRange(oftEntry.getBlock(),
+                currentPosition, oftEntry.getBlock().length)
+            );
+
+            count -= oftEntry.getBlock().length - currentPosition;
+
+            oft.storeBlock(id);
+            oft.loadBlock(id, currentBlockNumber + 1);
         }
 
         return readBytes;
@@ -99,9 +98,8 @@ public class FileManager { //TODO: implement interface with all required methods
 
     public void seek(int id, int pos) throws SeekFileException {
         int blockSize = oft.getDisk().blockSize();
-        int maxBlockNumber = oft.getMaxDescriptorBlockNumber(0);
 
-        if (id < 0 || id > maxBlockNumber) {
+        if (id < 0 || id > oft.getMaxNumEntries() - 1) {
             throw new SeekFileException("Id is out of range");
         }
 
@@ -156,6 +154,55 @@ public class FileManager { //TODO: implement interface with all required methods
         return files;
     }
 
+    public void write(int id, String str) throws FileException {
+        Descriptor file = oft.getDescriptorByID(id);
+        OFTEntry entry = oft.getEntryById(id);
+
+        for (int symbolID = 0; symbolID < str.length(); symbolID++) {
+            if (entry.getCurrentPosition() != 0 && (entry.getCurrentPosition()) % oft.getDisk().blockSize() == 0) {
+                if ((entry.getCurrentPosition()) / oft.getDisk().blockSize() > 2) {
+                    oft.setDescriptorByID(id, file);
+                    oft.storeBlock(id);
+                    throw new FileException("File " + id + " is full");
+                }
+
+                entry.setCurrentPosition(entry.getCurrentPosition() - 1);
+                oft.storeBlock(id);
+                oft.setDescriptorByID(id, file);
+                oft.loadBlock(id, (entry.getCurrentPosition() + 1) / oft.getDisk().blockSize());
+                entry.setCurrentPosition(entry.getCurrentPosition() + 1);
+            }
+
+            if (entry.getBlock() == null) {
+                int blockNumber = entry.getCurrentPosition() / oft.getDisk().blockSize();
+                byte[] zeroBlock = oft.getDisk().readBlock(0);
+                Bitmap map = new Bitmap();
+                map.deserialize(zeroBlock, 0);
+
+                int freePos = map.nextFree();
+                map.set(freePos);
+                map.serialize(zeroBlock, 0);
+                oft.getDisk().writeBlock(zeroBlock, 0);
+
+                int[] ptrs = file.getBlocks();
+                ptrs[blockNumber] = freePos;
+                file.setBlocks(ptrs);
+                oft.setDescriptorByID(id, file);
+
+                oft.loadBlock(id, blockNumber);
+                entry = oft.getEntryById(id);
+            }
+
+            byte[] block = entry.getBlock();
+            block[entry.getCurrentPosition() % oft.getDisk().blockSize()] = (byte) str.charAt(symbolID);
+            file.setLength(file.getLength() + 1);
+            entry.setCurrentPosition(entry.getCurrentPosition() + 1);
+        }
+
+        oft.setDescriptorByID(id, file);
+        oft.storeBlock(id);
+    }
+
     public void remove(int filename) {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
@@ -206,7 +253,7 @@ public class FileManager { //TODO: implement interface with all required methods
         }
     }
 
-    private void setDirectoryEntryByID(DirectoryEntry entry, int id) throws DirectoryEntryNotFoundException {
+    private void setDirectoryEntryByID(DirectoryEntry entry, int id) throws DirectoryException {
         DirectoryEntry temp = new DirectoryEntry();
 
         int absolutePos = 0;
@@ -214,7 +261,7 @@ public class FileManager { //TODO: implement interface with all required methods
             byte[] data = oft.loadBlock(0, blockNumber);
 
             if (data == null) {
-                throw new DirectoryEntryNotFoundException("Cannot find directory entry with id = " + id);
+                throw new DirectoryException("Cannot find directory entry with id = " + id);
             }
 
             int currentPosition = 0;
@@ -232,10 +279,10 @@ public class FileManager { //TODO: implement interface with all required methods
             }
         }
 
-        throw new DirectoryEntryNotFoundException("Cannot find directory entry with id = " + id);
+        throw new DirectoryException("Cannot find directory entry with id = " + id);
     }
 
-    private int getEmptyDirectoryEntryID() throws DirectoryFullException {
+    private int getEmptyDirectoryEntryID() throws DirectoryException {
         DirectoryEntry entry = new DirectoryEntry();
 
         int absolutePos = 0;
@@ -275,10 +322,10 @@ public class FileManager { //TODO: implement interface with all required methods
             }
         }
 
-        throw new DirectoryFullException("Directory is full");
+        throw new DirectoryException("Directory is full");
     }
 
-    private int getEmptyDescriptorID() throws DirectoryFullException {
+    private int getEmptyDescriptorID() throws DirectoryException {
         Descriptor desc = new Descriptor();
 
         int absolutePos = 0;
@@ -299,55 +346,6 @@ public class FileManager { //TODO: implement interface with all required methods
             }
         }
 
-        throw new DirectoryFullException("Directory is full");
-    }
-
-    public void write(int id, String str) throws FileFullException {
-        Descriptor file = oft.getDescriptorByID(id);
-        OFTEntry entry = ((OpenFileTable) oft).getEntry(id);
-
-        for (int symbolID = 0; symbolID < str.length(); symbolID++) {
-            if (entry.getCurrentPosition() != 0 && (entry.getCurrentPosition()) % oft.getDisk().blockSize() == 0) {
-                if ((entry.getCurrentPosition()) / oft.getDisk().blockSize() > 2) {
-                    oft.setDescriptorByID(id, file);
-                    oft.storeBlock(id);
-                    throw new FileFullException("File " + id + " is full");
-                }
-
-                entry.setCurrentPosition(entry.getCurrentPosition() - 1);
-                oft.storeBlock(id);
-                oft.setDescriptorByID(id, file);
-                oft.loadBlock(id, (entry.getCurrentPosition() + 1) / oft.getDisk().blockSize());
-                entry.setCurrentPosition(entry.getCurrentPosition() + 1);
-            }
-
-            if (entry.getBlock() == null) {
-                int blockNumber = entry.getCurrentPosition() / oft.getDisk().blockSize();
-                byte[] zeroBlock = oft.getDisk().readBlock(0);
-                Bitmap map = new Bitmap();
-                map.deserialize(zeroBlock, 0);
-
-                int freePos = map.nextFree();
-                map.set(freePos);
-                map.serialize(zeroBlock, 0);
-                oft.getDisk().writeBlock(zeroBlock, 0);
-
-                int[] ptrs = file.getBlocks();
-                ptrs[blockNumber] = freePos;
-                file.setBlocks(ptrs);
-                oft.setDescriptorByID(id, file);
-
-                oft.loadBlock(id, blockNumber);
-                entry = ((OpenFileTable) oft).getEntry(id);
-            }
-
-            byte[] block = entry.getBlock();
-            block[entry.getCurrentPosition() % oft.getDisk().blockSize()] = (byte) str.charAt(symbolID);
-            file.setLength(file.getLength() + 1);
-            entry.setCurrentPosition(entry.getCurrentPosition() + 1);
-        }
-
-        oft.setDescriptorByID(id, file);
-        oft.storeBlock(id);
+        throw new DirectoryException("Directory is full");
     }
 }

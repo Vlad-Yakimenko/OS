@@ -30,10 +30,15 @@ public interface IOpenFileTable {
     // @note block can be 0-2
     byte[] loadBlock(int id, int block);
 
-    // Stores block of open file with id <id> into disk
+    // Store block of open file with id <id> into disk
     void storeBlock(int id);
 
+    // Return L-disk
     Disk getDisk();
 
+    // Return open entry by its id
     OFTEntry getEntryById(int id);
+
+    // Return max number of entries in open file table
+    int getMaxNumEntries();
 }

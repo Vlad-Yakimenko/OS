@@ -10,11 +10,11 @@ import ua.knu.exceptions.DirectoryFullException;
 @FieldDefaults(makeFinal = true)
 public class FileManager {
 
-    private OftInterface oft;
+    private OpenFileTable oft;
     private Disk disk;
 
     public FileManager(Disk disk) {
-        oft = new OpenFileTable(disk);
+        oft = new OpenFileTableImpl(disk);
         this.disk = disk;
     }
 

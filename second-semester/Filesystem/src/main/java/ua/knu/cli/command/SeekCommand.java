@@ -31,6 +31,7 @@ public class SeekCommand extends Command {
         int position = Integer.parseInt(parameters[2]);
 
         fileManager.seek(fileId, position);
+        view.write(String.format("current position is %s", position));
     }
 
     @Override

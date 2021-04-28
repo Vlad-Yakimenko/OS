@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import ua.knu.cli.view.View;
-import ua.knu.filesystem.oft.OpenFileTable;
+import ua.knu.filesystem.FileManager;
 import ua.knu.util.Constants;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
 public class OpenCommand extends Command {
 
-    private OpenFileTable openFileTable;
+    private FileManager fileManager;
     private View view;
 
     @Override
@@ -27,7 +27,7 @@ public class OpenCommand extends Command {
 
         String filename = parameters[1];
 
-        int index = openFileTable.open(Integer.parseInt(filename));
+        int index = fileManager.open(Integer.parseInt(filename));
 
         if (index < 0) {
             view.write("we can not open this file");

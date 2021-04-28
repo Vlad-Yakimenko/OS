@@ -1,11 +1,12 @@
 package ua.knu.cli;
 
 import lombok.experimental.FieldDefaults;
-import ua.knu.cli.command.Command;
-import ua.knu.cli.command.ExitCommand;
-import ua.knu.cli.command.HelpCommand;
+import ua.knu.cli.command.*;
 import ua.knu.cli.view.View;
 import ua.knu.exceptions.ExitException;
+import ua.knu.filesystem.FileManager;
+import ua.knu.filesystem.FileManagerImpl;
+import ua.knu.io.disk.DiskInitializer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,12 +14,21 @@ import java.util.List;
 @FieldDefaults(makeFinal = true)
 public class CliHandler implements Runnable {
 
+    private FileManager fileManager;
     private View view;
     private List<Command> commands;
 
     public CliHandler(View view) {
+        this.fileManager = new FileManagerImpl(DiskInitializer.initialize());
         this.view = view;
         this.commands = Arrays.asList(
+                new InitCommand(view),
+                new CreateCommand(fileManager, view),
+                new OpenCommand(fileManager, view),
+                new WriteCommand(fileManager, view),
+                new ReadCommand(fileManager, view),
+                new SeekCommand(fileManager, view),
+                new DirectoryCommand(fileManager, view),
                 new HelpCommand(view),
                 new ExitCommand()
         );

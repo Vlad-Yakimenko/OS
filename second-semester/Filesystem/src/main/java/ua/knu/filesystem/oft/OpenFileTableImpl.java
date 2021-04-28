@@ -1,13 +1,12 @@
 package ua.knu.filesystem.oft;
 
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import ua.knu.elements.Descriptor;
 import ua.knu.elements.DirectoryEntry;
 import ua.knu.io.disk.Disk;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 // OpenFileTable (OFT) represents a tableof open files
 // @note Directory must always be open
@@ -15,33 +14,32 @@ import java.util.ArrayList;
 @FieldDefaults(makeFinal = true)
 public class OpenFileTableImpl implements OpenFileTable {
 
-    private static final int MAX_NUM_ENTRIES = 4;
-
     // entries stores OFT entries
     private List<OftEntry> entries;
 
     // empty stores true if OFT entry is taken
     private List<Boolean> empty;
 
-    @Getter
     private Disk disk;
 
-    public OpenFileTableImpl(Disk disk) {
-        entries = new ArrayList<>(MAX_NUM_ENTRIES);
-        empty = new ArrayList<>(MAX_NUM_ENTRIES);
+    int maxNumEntries = 4;
 
-        for (int entryID = 0; entryID < MAX_NUM_ENTRIES; entryID++) {
+    public OpenFileTableImpl(Disk d) {
+        entries = new ArrayList<>(maxNumEntries);
+        empty = new ArrayList<>(maxNumEntries);
+
+        for (int entryID = 0; entryID < maxNumEntries; entryID++) {
             entries.add(new OftEntry());
             empty.add(true);
         }
 
-        this.disk = disk;
+        disk = d;
 
         // Load directory
         empty.set(0, false);
         entries.get(0).setDescriptorPosition(0);
 
-        // get directory descriptor
+        // Get directory descriptor
         Descriptor directoryDescriptor = getDescriptorByID(0);
         // Load first block of directory
         if (directoryDescriptor.getBlocks()[0] != 0) {
@@ -50,7 +48,12 @@ public class OpenFileTableImpl implements OpenFileTable {
     }
 
     @Override
-    public int open(int filename) {  // TODO refactor this method
+    public int getMaxNumEntries() {
+        return maxNumEntries;
+    }
+
+    @Override
+    public int open(int filename) {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 
@@ -73,7 +76,7 @@ public class OpenFileTableImpl implements OpenFileTable {
                 if (entry.getName() == filename) {
                     // Reset directory OFT entry, because we iterated over it!
                     loadBlock(0, 0);
-                    
+
                     int block = entry.getDescriptorID() / (disk.getBlockSize() / desc.size()) + 1;
                     int offset = entry.getDescriptorID() % (disk.getBlockSize() / desc.size());
 
@@ -81,9 +84,8 @@ public class OpenFileTableImpl implements OpenFileTable {
                     desc.deserialize(data, offset * desc.size());
 
                     // Find free OTF entry
-                    for (int entryID = 0; entryID < MAX_NUM_ENTRIES; entryID++) {
-                        boolean isCurrentEntryEmpty = empty.get(entryID);
-                        if (isCurrentEntryEmpty) {
+                    for (int entryID = 0; entryID < maxNumEntries; entryID++) {
+                        if (empty.get(entryID)) {
                             // Load file data
                             empty.set(entryID, false);
                             entries.get(entryID).setCurrentPosition(0);
@@ -113,6 +115,11 @@ public class OpenFileTableImpl implements OpenFileTable {
         empty.set(id, true);
 
         return 0;
+    }
+
+    @Override
+    public OftEntry getEntryById(int id) {
+        return entries.get(id);
     }
 
     @Override
@@ -151,6 +158,8 @@ public class OpenFileTableImpl implements OpenFileTable {
     public byte[] loadBlock(int id, int block) {
         Descriptor desc = getDescriptorByID(id);
         if (desc.getBlocks()[block] <= 0) {
+            entries.get(id).setBlock(null);
+            entries.get(id).setCurrentPosition(disk.getBlockSize() * block);
             return null;
         }
 
@@ -170,5 +179,9 @@ public class OpenFileTableImpl implements OpenFileTable {
 
         byte[] data = entries.get(id).getBlock();
         disk.writeBlock(data, blockID);
+    }
+
+    public Disk getDisk() {
+        return disk;
     }
 }

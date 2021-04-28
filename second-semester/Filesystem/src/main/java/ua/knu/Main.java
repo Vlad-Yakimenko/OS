@@ -1,20 +1,20 @@
 package ua.knu;
 
 import org.apache.commons.lang3.tuple.Pair;
-import ua.knu.io.disk.DiskInitializer;
-import ua.knu.elements.Bitmap;
 import ua.knu.filesystem.FileManager;
+import ua.knu.filesystem.FileManagerImpl;
 import ua.knu.io.disk.Disk;
+import ua.knu.io.disk.DiskInitializer;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         Disk disk = DiskInitializer.initialize();
 
-        FileManager fm = new FileManager(disk);
+        FileManager fm = new FileManagerImpl(disk);
 
 //        byte[] block = disk.readBlock(0);
 //        Bitmap bm = new Bitmap();
@@ -71,10 +71,11 @@ public class Main {
 //        fm.seek(id, 0);
 //        byte[] data = fm.read(id, 65);
 //        System.out.println(new String(data, StandardCharsets.UTF_8));
+//
+//        fm.remove(4);
+//
+//        List<Pair<?, ?>> files = fm.directory();
+//        System.out.println(files);
 
-        fm.remove(4);
-
-        ArrayList<Pair<?, ?>> files = fm.directory();
-        System.out.println(files);
     }
 }

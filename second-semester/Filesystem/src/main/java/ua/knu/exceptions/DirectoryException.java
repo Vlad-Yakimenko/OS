@@ -1,4 +1,4 @@
-package ua.knu.errors;
+package ua.knu.exceptions;
 
 public class DirectoryException extends Exception {
     public DirectoryException(String message) {

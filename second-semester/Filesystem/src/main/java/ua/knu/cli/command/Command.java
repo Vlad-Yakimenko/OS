@@ -1,16 +1,27 @@
 package ua.knu.cli.command;
 
+import lombok.val;
 import ua.knu.util.Constants;
 
-public interface Command {
+public abstract class Command {
 
-    boolean canProcess(String command);
+    public abstract boolean canProcess(String command);
 
-    void process(String command);
+    public abstract void process(String command);
 
-    String getCommandSample();
+    public abstract String getCommandSample();
 
-    default int getCorrectParametersAmount() {
+    protected void verifyCorrectParametersAmount(int actualParametersAmount) {
+        val correctParametersAmount = getCorrectParametersAmount();
+
+        if (actualParametersAmount != correctParametersAmount) {
+            throw new IllegalArgumentException(
+                    String.format("Incorrect amount of parameters, expected %s, but actual %s",
+                            correctParametersAmount, actualParametersAmount));
+        }
+    }
+
+    private int getCorrectParametersAmount() {
         return getCommandSample().split(Constants.COMMAND_SEPARATOR).length;
     }
 }

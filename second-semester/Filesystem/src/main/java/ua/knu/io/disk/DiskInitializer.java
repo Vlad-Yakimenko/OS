@@ -1,7 +1,6 @@
 package ua.knu.io.disk;
 
-import ua.knu.elements.Bitmap;
-import ua.knu.elements.Descriptor;
+import ua.knu.elements.*;
 
 public class DiskInitializer {
 

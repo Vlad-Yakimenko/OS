@@ -7,10 +7,10 @@ import ua.knu.io.disk.Disk;
 import java.util.List;
 import java.util.ArrayList;
 
-// OpenFileTable (OFT) represents a tableof open files
+// OpenFileTable (OFT) represents a table of the open files
 // @note Directory must always be open
 // @note You should modify this class, and/or its interface
-public class OpenFileTable implements OFTInterface {
+public class OpenFileTable implements IOpenFileTable {
     // entries stores OFT entries
     List<OFTEntry> entries;
 
@@ -36,7 +36,7 @@ public class OpenFileTable implements OFTInterface {
         empty.set(0, false);
         entries.get(0).setDescriptorPosition(0);
 
-        // get directory descriptor
+        // Get directory descriptor
         Descriptor directoryDescriptor = getDescriptorByID(0);
         // Load first block of directory
         if (directoryDescriptor.getBlocks()[0] != 0) {
@@ -66,7 +66,7 @@ public class OpenFileTable implements OFTInterface {
 
                 // Found one
                 if (entry.getName() == filename) {
-                    // Reset directory OFT entry, beacause we iterated over it!
+                    // Reset directory OFT entry, because we iterated over it!
                     loadBlock(0, 0);
                     
                     int block = entry.getDescriptorID() / (disk.blockSize() / desc.size()) + 1;
@@ -107,6 +107,11 @@ public class OpenFileTable implements OFTInterface {
         empty.set(id, true);
 
         return 0;
+    }
+
+    @Override
+    public OFTEntry getEntryById(int id) {
+        return entries.get(id);
     }
 
     @Override

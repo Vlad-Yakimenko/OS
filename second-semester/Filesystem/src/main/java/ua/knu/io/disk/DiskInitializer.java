@@ -36,7 +36,6 @@ public class DiskInitializer {
             disk.writeBlock(row, blockID);
         }
 
-
         return disk;
     }
 }

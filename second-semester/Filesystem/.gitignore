@@ -8,4 +8,4 @@
 .settings
 bin
 build
-disk.bin
+src/main/resources/disk.bin

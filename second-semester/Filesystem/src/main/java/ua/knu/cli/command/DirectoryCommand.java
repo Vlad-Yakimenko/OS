@@ -2,8 +2,13 @@ package ua.knu.cli.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import ua.knu.cli.view.View;
 import ua.knu.filesystem.FileManager;
+import ua.knu.util.FilenameConverter;
+
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
@@ -19,7 +24,13 @@ public class DirectoryCommand extends Command {
 
     @Override
     public void process(String command) {
-        view.write(fileManager.directory().toString());
+        val directoryRaw = fileManager.directory();
+
+        val directory = directoryRaw.stream()
+                .map(pair -> Pair.of(FilenameConverter.convertToString(pair.getLeft()), pair.getRight()))
+                .collect(Collectors.toList());
+
+        view.write(directory.toString());
     }
 
     @Override

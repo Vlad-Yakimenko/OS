@@ -26,7 +26,7 @@ public class FileView implements View {
     @Override
     @SneakyThrows
     public void write(String message) {
-        FileUtils.writeStringToFile(outputFile, message, Charset.defaultCharset(), true);
+        FileUtils.writeStringToFile(outputFile, message + '\n', Charset.defaultCharset(), true);
     }
 
     @Override

@@ -7,6 +7,7 @@ import lombok.val;
 import ua.knu.cli.view.View;
 import ua.knu.filesystem.FileManager;
 import ua.knu.util.Constants;
+import ua.knu.util.FilenameConverter;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
@@ -27,9 +28,14 @@ public class CreateCommand extends Command {
 
         verifyCorrectParametersAmount(parameters.length);
 
-        // TODO why int value as filename on FileManager abstraction level
         String filename = parameters[1];
-        fileManager.create(Integer.parseInt(filename));
+
+        if (filename.length() > 4) {
+            throw new IllegalArgumentException("filename length must contain 4 or less symbols");
+        }
+
+        // TODO fail already exists exception
+        fileManager.create(FilenameConverter.convertToInt(filename));
         view.write(String.format("file %s created", filename));
     }
 

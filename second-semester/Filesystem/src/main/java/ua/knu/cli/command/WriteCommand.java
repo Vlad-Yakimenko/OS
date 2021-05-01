@@ -8,6 +8,9 @@ import ua.knu.cli.view.View;
 import ua.knu.filesystem.FileManager;
 import ua.knu.util.Constants;
 
+import java.util.Arrays;
+import java.util.StringJoiner;
+
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
 public class WriteCommand extends Command {
@@ -28,7 +31,7 @@ public class WriteCommand extends Command {
         verifyCorrectParametersAmount(parameters.length);
 
         int fileId = Integer.parseInt(parameters[1]);
-        String message = parameters[2];
+        String message = getMessage(parameters);
 
         fileManager.write(fileId, message);
         view.write(String.format("%s bytes written", message.length()));
@@ -36,6 +39,26 @@ public class WriteCommand extends Command {
 
     @Override
     public String getCommandSample() {
-        return "wr 1 message";
+        return "wr 1 text";
+    }
+
+    @Override
+    protected void verifyCorrectParametersAmount(int actualParametersAmount) {
+        if (actualParametersAmount < 3) {
+            throw new IllegalArgumentException(
+                    String.format("Incorrect amount of parameters, expected more than 3, but actual %s", actualParametersAmount));
+        }
+    }
+
+    private String getMessage(String[] parameters) {
+        String[] messageArray = new String[parameters.length - 2];
+
+        System.arraycopy(parameters, 2, messageArray, 0, messageArray.length);
+
+        StringJoiner stringJoiner = new StringJoiner(" ");
+
+        Arrays.stream(messageArray).forEach(stringJoiner::add);
+
+        return stringJoiner.toString();
     }
 }

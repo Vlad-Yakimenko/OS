@@ -1,6 +1,8 @@
 package ua.knu.cli;
 
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.StringUtils;
 import ua.knu.cli.command.*;
 import ua.knu.cli.view.View;
 import ua.knu.exceptions.ExitException;
@@ -14,12 +16,11 @@ import java.util.List;
 @FieldDefaults(makeFinal = true)
 public class CliHandler implements Runnable {
 
-    private FileManager fileManager;
     private View view;
     private List<Command> commands;
 
     public CliHandler(View view) {
-        this.fileManager = new FileManagerImpl(DiskInitializer.initialize());
+        FileManager fileManager = new FileManagerImpl(DiskInitializer.initialize());
         this.view = view;
         this.commands = Arrays.asList(
                 new InitCommand(view),
@@ -39,15 +40,18 @@ public class CliHandler implements Runnable {
         try {
             handle();
         } catch (ExitException e) {
-            view.write("Goodbye!");
+            view.write("goodbye!");
         }
     }
 
     @SuppressWarnings({"java:S2189", "InfiniteLoopStatement"})
+    @SneakyThrows
     private void handle() {
-        view.write("Hello!");
+        view.write("hello!");
 
         while (true) {
+            view.write("enter command (or help if you need):");
+
             String input = view.read();
 
             for (Command command : commands) {
@@ -65,17 +69,17 @@ public class CliHandler implements Runnable {
                     break;
                 }
             }
-
-            view.write("Enter command (or help if you need):");
         }
     }
 
     private void printError(Exception e) {
-        StringBuilder message = new StringBuilder(e.getMessage());
+        StringBuilder message = new StringBuilder(e.getMessage() == null ? StringUtils.EMPTY : e.getMessage());
+
         if (e.getCause() != null) {
             message.append(" ").append(e.getCause().getMessage());
         }
-        view.write("Failed by cause: " + message);
-        view.write("Try again.");
+
+        view.write("something went wrong: " + message.toString().toLowerCase());
+        view.write("try again.");
     }
 }

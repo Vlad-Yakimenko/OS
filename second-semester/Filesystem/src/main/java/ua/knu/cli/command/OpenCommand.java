@@ -35,6 +35,6 @@ public class OpenCommand extends Command {
 
     @Override
     public String getCommandSample() {
-        return "op filename";
+        return "op file";
     }
 }

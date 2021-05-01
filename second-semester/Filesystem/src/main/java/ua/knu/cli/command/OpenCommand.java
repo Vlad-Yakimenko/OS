@@ -6,6 +6,7 @@ import lombok.val;
 import ua.knu.cli.view.View;
 import ua.knu.filesystem.FileManager;
 import ua.knu.util.Constants;
+import ua.knu.util.FilenameConverter;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
@@ -27,13 +28,9 @@ public class OpenCommand extends Command {
 
         String filename = parameters[1];
 
-        int index = fileManager.open(Integer.parseInt(filename));
+        int index = fileManager.open(FilenameConverter.convertToInt(filename));
 
-        if (index < 0) {
-            view.write("we can not open this file");
-        } else {
-            view.write(String.format("file %s opened, index=%s", filename, index));
-        }
+        view.write(String.format("file %s opened, index=%s", filename, index));
     }
 
     @Override

@@ -27,6 +27,7 @@ public class CliHandler implements Runnable {
                 new CreateCommand(fileManager, view),
                 new RemoveCommand(fileManager, view),
                 new OpenCommand(fileManager, view),
+                new CloseCommand(fileManager, view),
                 new WriteCommand(fileManager, view),
                 new ReadCommand(fileManager, view),
                 new SeekCommand(fileManager, view),

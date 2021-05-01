@@ -1,6 +1,7 @@
 package ua.knu.cli.command;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import ua.knu.cli.view.View;
@@ -21,6 +22,7 @@ public class OpenCommand extends Command {
     }
 
     @Override
+    @SneakyThrows
     public void process(String command) {
         val parameters = command.split(Constants.COMMAND_SEPARATOR);
 

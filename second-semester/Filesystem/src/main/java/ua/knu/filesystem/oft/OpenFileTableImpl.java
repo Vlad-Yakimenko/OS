@@ -3,12 +3,13 @@ package ua.knu.filesystem.oft;
 import lombok.experimental.FieldDefaults;
 import ua.knu.elements.Descriptor;
 import ua.knu.elements.DirectoryEntry;
+import ua.knu.exceptions.FileOperationException;
 import ua.knu.io.disk.Disk;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// OpenFileTable (OFT) represents a tableof open files
+// OpenFileTable (OFT) represents a table of open files
 // @note Directory must always be open
 // @note You should modify this class, and/or its interface
 @FieldDefaults(makeFinal = true)
@@ -25,25 +26,25 @@ public class OpenFileTableImpl implements OpenFileTable {
     int maxNumEntries = 4;
 
     public OpenFileTableImpl(Disk d) {
-        entries = new ArrayList<>(maxNumEntries);
-        empty = new ArrayList<>(maxNumEntries);
+        this.entries = new ArrayList<>(maxNumEntries);
+        this.empty = new ArrayList<>(maxNumEntries);
 
         for (int entryID = 0; entryID < maxNumEntries; entryID++) {
-            entries.add(new OftEntry());
-            empty.add(true);
+            this.entries.add(new OftEntry());
+            this.empty.add(true);
         }
 
-        disk = d;
+        this.disk = d;
 
         // Load directory
-        empty.set(0, false);
-        entries.get(0).setDescriptorPosition(0);
+        this.empty.set(0, false);
+        this.entries.get(0).setDescriptorPosition(0);
 
         // Get directory descriptor
         Descriptor directoryDescriptor = getDescriptorByID(0);
         // Load first block of directory
         if (directoryDescriptor.getBlocks()[0] != 0) {
-            entries.get(0).setBlock(disk.readBlock(directoryDescriptor.getBlocks()[0]));
+            this.entries.get(0).setBlock(disk.readBlock(directoryDescriptor.getBlocks()[0]));
         }
     }
 
@@ -53,7 +54,12 @@ public class OpenFileTableImpl implements OpenFileTable {
     }
 
     @Override
-    public int open(int filename) {
+    public boolean isEmptyEntry(int id) {
+        return empty.get(id);
+    }
+
+    @Override
+    public int open(int filename) throws FileOperationException {
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 
@@ -63,7 +69,7 @@ public class OpenFileTableImpl implements OpenFileTable {
             // Load next block
             byte[] data = loadBlock(0, blockNumber);
             if (data == null) {
-                return -1;
+                throw new FileOperationException(String.format("File with name = %o doesn't exist", filename));
             }
 
             // Iterate over block to find directory entry with same name
@@ -101,16 +107,24 @@ public class OpenFileTableImpl implements OpenFileTable {
                         }
                     }
 
-                    return -1;
+                    throw new FileOperationException("Can't find free oft entry");
                 }
             }
         }
 
-        return -1;
+        throw new FileOperationException(String.format("File with name = %o doesn't exist", filename));
     }
 
     @Override
-    public int close(int id) {
+    public int close(int id) throws FileOperationException {
+        if (id < 0 || id >= entries.size()) {
+            throw new FileOperationException(String.format("Id = %o is out of range", id));
+        }
+
+        if (isEmptyEntry(id)) {
+            throw new FileOperationException(String.format("File with id %o is not open", id));
+        }
+
         storeBlock(id);
         empty.set(id, true);
 

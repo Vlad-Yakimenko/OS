@@ -7,8 +7,11 @@ import ua.knu.elements.Bitmap;
 import ua.knu.elements.Descriptor;
 import ua.knu.elements.DirectoryEntry;
 import ua.knu.exceptions.FileOperationException;
-import ua.knu.filesystem.oft.*;
+import ua.knu.filesystem.oft.OftEntry;
+import ua.knu.filesystem.oft.OpenFileTable;
+import ua.knu.filesystem.oft.OpenFileTableImpl;
 import ua.knu.io.disk.Disk;
+import ua.knu.util.FilenameConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +19,15 @@ import java.util.List;
 
 @FieldDefaults(makeFinal = true)
 public class FileManagerImpl implements FileManager {
+
+    private static final String ID_IS_OUT_OF_RANGE = "Id = %o is out of range";
+    private static final String COUNT_IS_OUT_OF_RANGE = "Count = %o is out of range";
+    private static final String POSITION_IS_OUT_OF_RANGE = "Position = %o is out of range";
+    private static final String CANT_FIND_DIRECTORY_ENTRY_WITH_ID = "Can't find directory entry with id = %o";
+    private static final String DIRECTORY_IS_FULL = "Directory is full";
+    private static final String FILE_WITH_ID_IS_NOT_OPEN = "File with id = %o is not open";
+    private static final String FILE_WITH_ID_IS_FULL = "File with id = %o is full";
+    private static final String FILE_DOES_NOT_EXIST = "File with filename = %s does not exist";
 
     private OpenFileTable oft;
     private Disk disk;
@@ -65,13 +77,13 @@ public class FileManagerImpl implements FileManager {
         int blockSize = oft.getDisk().getBlockSize();
 
         if (id < 0 || id > oft.getMaxNumEntries() - 1) {
-            throw new FileOperationException(String.format("Id = %o is out of range", id));
+            throw new FileOperationException(String.format(ID_IS_OUT_OF_RANGE, id));
         }
 
         OftEntry oftEntry = oft.getEntryById(id);
 
         if (count <= 0 || count > blockSize * oft.getMaxDescriptorBlockNumber(0)) {
-            throw new FileOperationException(String.format("Count = %o is out of range", count));
+            throw new FileOperationException(String.format(COUNT_IS_OUT_OF_RANGE, count));
         }
 
         byte[] readBytes = {};
@@ -118,13 +130,13 @@ public class FileManagerImpl implements FileManager {
         int blockSize = oft.getDisk().getBlockSize();
 
         if (id < 0 || id > oft.getMaxNumEntries() - 1) {
-            throw new FileOperationException(String.format("Id = %o is out of range", id));
+            throw new FileOperationException(String.format(ID_IS_OUT_OF_RANGE, id));
         }
 
         int endPos = oft.getDescriptorByID(id).getLength();
 
         if (pos < 0 || pos > endPos) {
-            throw new FileOperationException(String.format("Position = %o is out of range", pos));
+            throw new FileOperationException(String.format(POSITION_IS_OUT_OF_RANGE, pos));
         }
 
         OftEntry entry = oft.getEntryById(id);
@@ -182,11 +194,11 @@ public class FileManagerImpl implements FileManager {
     @Override
     public void write(int id, String str) throws FileOperationException {
         if (id < 0 || id > oft.getMaxNumEntries() - 1) {
-            throw new FileOperationException(String.format("Id = %o is out of range", id));
+            throw new FileOperationException(String.format(ID_IS_OUT_OF_RANGE, id));
         }
 
         if (oft.isEmptyEntry(id)) {
-            throw new FileOperationException(String.format("File with id = %o is not open", id));
+            throw new FileOperationException(String.format(FILE_WITH_ID_IS_NOT_OPEN, id));
         }
 
         Descriptor file = oft.getDescriptorByID(id);
@@ -197,7 +209,7 @@ public class FileManagerImpl implements FileManager {
                 if ((entry.getCurrentPosition()) / oft.getDisk().getBlockSize() > 2) {
                     oft.setDescriptorByID(id, file);
                     oft.storeBlock(id);
-                    throw new FileOperationException(String.format("File with id = %o is full", id));
+                    throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));
                 }
 
                 entry.setCurrentPosition(entry.getCurrentPosition() - 1);
@@ -247,7 +259,7 @@ public class FileManagerImpl implements FileManager {
             // Load next block
             byte[] data = oft.loadBlock(0, blockNumber);
             if (data == null) {
-                throw new FileOperationException(String.format("File with filename = %o does not exist", filename));
+                throw new FileOperationException(String.format(FILE_DOES_NOT_EXIST, FilenameConverter.convertToString(filename)));
             }
 
             // Iterate over block to find entry with filename
@@ -312,7 +324,7 @@ public class FileManagerImpl implements FileManager {
             byte[] data = oft.loadBlock(0, blockNumber);
 
             if (data == null) {
-                throw new FileOperationException(String.format("Can't find directory entry with id = %o", id));
+                throw new FileOperationException(String.format(CANT_FIND_DIRECTORY_ENTRY_WITH_ID, id));
             }
 
             int currentPosition = 0;
@@ -330,7 +342,7 @@ public class FileManagerImpl implements FileManager {
             }
         }
 
-        throw new FileOperationException(String.format("Can't find directory entry with id = %o", id));
+        throw new FileOperationException(String.format(CANT_FIND_DIRECTORY_ENTRY_WITH_ID, id));
     }
 
     private int getEmptyDirectoryEntryID() throws FileOperationException {
@@ -373,7 +385,7 @@ public class FileManagerImpl implements FileManager {
             }
         }
 
-        throw new FileOperationException("Directory is full");
+        throw new FileOperationException(DIRECTORY_IS_FULL);
     }
 
     private int getEmptyDescriptorID() throws FileOperationException {
@@ -398,6 +410,6 @@ public class FileManagerImpl implements FileManager {
             }
         }
 
-        throw new FileOperationException("Directory is full");
+        throw new FileOperationException(DIRECTORY_IS_FULL);
     }
 }

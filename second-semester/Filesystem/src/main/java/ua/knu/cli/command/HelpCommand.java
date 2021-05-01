@@ -20,8 +20,12 @@ public class HelpCommand extends Command {
         view.write("commands:");
         view.write("\tcr name");
         view.write("\t\tcreates file with the given name(filename must contain 4 or less symbols)");
+        view.write("\trm name");
+        view.write("\t\tremoves file with the given name");
         view.write("\top name");
         view.write("\t\topens file by the given name, returns index of an opened file");
+        view.write("\tcl 1");
+        view.write("\t\tcloses file by the given index");
         view.write("\twr 1 text");
         view.write("\t\twrites given text in a file by the index of an opened file");
         view.write("\trd 1 10");

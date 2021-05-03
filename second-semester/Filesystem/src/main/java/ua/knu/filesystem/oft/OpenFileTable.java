@@ -48,4 +48,7 @@ public interface OpenFileTable {
 
     // Return whether entry with id <id> is open now
     boolean isEmptyEntry(int id);
+
+    // Remove file from oft without saving
+    void delete(int descID);
 }

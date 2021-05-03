@@ -34,3 +34,7 @@ test {
 application {
     mainClassName = 'ua.knu.Main' 
 }
+
+run {
+    standardInput = System.in
+}

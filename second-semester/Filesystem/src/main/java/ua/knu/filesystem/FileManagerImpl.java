@@ -13,9 +13,7 @@ import ua.knu.filesystem.oft.OpenFileTableImpl;
 import ua.knu.io.disk.Disk;
 import ua.knu.util.FilenameConverter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @FieldDefaults(makeFinal = true)
 public class FileManagerImpl implements FileManager {
@@ -27,14 +25,18 @@ public class FileManagerImpl implements FileManager {
     private static final String DIRECTORY_IS_FULL = "Directory is full";
     private static final String FILE_WITH_ID_IS_NOT_OPEN = "File with id = %o is not open";
     private static final String FILE_WITH_ID_IS_FULL = "File with id = %o is full";
-    private static final String FILE_DOES_NOT_EXIST = "File with filename = %s does not exist";
+    private static final String FILE_DOES_NOT_EXIST = "File with filename = %o does not exist";
+    private static final String FILE_DOES_EXIST = "File with filename = %o exists";
 
     private OpenFileTable oft;
     private Disk disk;
+    Map<Integer, FileMetadata> files;
 
     public FileManagerImpl(Disk disk) {
         this.oft = new OpenFileTableImpl(disk);
         this.disk = disk;
+        files = new HashMap<Integer, FileMetadata>();
+        loadFiles();
     }
 
     @Override
@@ -49,6 +51,10 @@ public class FileManagerImpl implements FileManager {
 
     @Override
     public void create(int filename) throws FileOperationException {
+        if (files.containsKey(filename)) {
+            throw new FileOperationException(String.format(FILE_DOES_EXIST, filename));
+        }
+
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor descriptor = new Descriptor();
 
@@ -70,6 +76,8 @@ public class FileManagerImpl implements FileManager {
         descriptor = oft.getDescriptorByID(0);
         descriptor.setLength(descriptor.getLength() + 1);
         oft.setDescriptorByID(0, descriptor);
+
+        files.put(filename, new FileMetadata(entry.getName(), entry.getDescriptorID(), entryID, 0));
     }
 
     @Override
@@ -78,6 +86,10 @@ public class FileManagerImpl implements FileManager {
 
         if (id < 0 || id > oft.getMaxNumEntries() - 1) {
             throw new FileOperationException(String.format(ID_IS_OUT_OF_RANGE, id));
+        }
+
+        if (oft.isEmptyEntry(id)) {
+            throw new FileOperationException(String.format(FILE_WITH_ID_IS_NOT_OPEN, id));
         }
 
         OftEntry oftEntry = oft.getEntryById(id);
@@ -131,6 +143,10 @@ public class FileManagerImpl implements FileManager {
 
         if (id < 0 || id > oft.getMaxNumEntries() - 1) {
             throw new FileOperationException(String.format(ID_IS_OUT_OF_RANGE, id));
+        }
+
+        if (oft.isEmptyEntry(id)) {
+            throw new FileOperationException(String.format(FILE_WITH_ID_IS_NOT_OPEN, id));
         }
 
         int endPos = oft.getDescriptorByID(id).getLength();
@@ -201,10 +217,17 @@ public class FileManagerImpl implements FileManager {
             throw new FileOperationException(String.format(FILE_WITH_ID_IS_NOT_OPEN, id));
         }
 
+        if (oft.isEmptyEntry(id)) {
+            throw new FileOperationException(String.format(FILE_WITH_ID_IS_NOT_OPEN, id));
+        }
+
         Descriptor file = oft.getDescriptorByID(id);
         OftEntry entry = oft.getEntryById(id);
 
         for (int symbolID = 0; symbolID < str.length(); symbolID++) {
+            if (entry.getCurrentPosition() == oft.getDisk().getBlockSize()*3 - 1) {
+                throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));
+            }
             if (entry.getCurrentPosition() != 0 && (entry.getCurrentPosition()) % oft.getDisk().getBlockSize() == 0) {
                 if ((entry.getCurrentPosition()) / oft.getDisk().getBlockSize() > 2) {
                     oft.setDescriptorByID(id, file);
@@ -251,6 +274,10 @@ public class FileManagerImpl implements FileManager {
     }
 
     public void remove(int filename) throws FileOperationException {
+        if (!files.containsKey(filename)) {
+            throw new FileOperationException(String.format(FILE_DOES_NOT_EXIST, filename));
+        }
+
         DirectoryEntry entry = new DirectoryEntry();
         Descriptor desc = new Descriptor();
 
@@ -308,6 +335,10 @@ public class FileManagerImpl implements FileManager {
                     map.serialize(zeroBlock, 0);
                     oft.getDisk().writeBlock(zeroBlock, 0);
 
+                    files.remove(filename);
+
+                    oft.delete(descriptionPos);
+                    
                     return;
                 }
 
@@ -411,5 +442,45 @@ public class FileManagerImpl implements FileManager {
         }
 
         throw new FileOperationException(DIRECTORY_IS_FULL);
+    }
+
+    public void loadFiles() {
+        DirectoryEntry entry = new DirectoryEntry();
+        Descriptor desc = new Descriptor();
+
+        int currentPosition = 0;
+        int currentID = 0;
+        int fileCounter = 0;
+        int filesAmount = oft.getDescriptorByID(0).getLength();
+
+        for (int blockNumber = 0; blockNumber < oft.getMaxDescriptorBlockNumber(0); blockNumber++) {
+            byte[] data = oft.loadBlock(0, blockNumber);
+            if (data == null) {
+                return;
+            }
+
+            while (fileCounter != filesAmount) {
+                entry.deserialize(data, currentPosition);
+                int descriptorID = entry.getDescriptorID();
+
+                if (descriptorID == 0) { // deleted entry
+                    currentPosition += entry.size();
+                    currentID++;
+                    continue;
+                }
+
+                int block = descriptorID / (disk.getBlockSize() / desc.size()) + 1;
+                int offset = descriptorID % (disk.getBlockSize() / desc.size());
+
+                byte[] blockData = disk.readBlock(block);
+                desc.deserialize(blockData, offset * desc.size());
+
+                files.put(entry.getName(), new FileMetadata(entry.getName(), entry.getDescriptorID(), currentID, desc.getLength()));
+
+                currentPosition += entry.size();
+                fileCounter++;
+                currentID++;
+            }
+        }
     }
 }

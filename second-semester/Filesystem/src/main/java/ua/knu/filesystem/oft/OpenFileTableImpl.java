@@ -89,6 +89,14 @@ public class OpenFileTableImpl implements OpenFileTable {
                     data = disk.readBlock(block);
                     desc.deserialize(data, offset * desc.size());
 
+                    for (int i = 0; i < getMaxNumEntries(); i++) {
+                        OftEntry e = entries.get(i);
+                        if (!empty.get(i) && e.getDescriptorPosition() == entry.getDescriptorID()) {
+                            empty.set(i, true);
+                            throw new FileOperationException(String.format("File with name = %o already opened with id = %o", filename, i));
+                        }
+                    }
+
                     // Find free OTF entry
                     for (int entryID = 0; entryID < maxNumEntries; entryID++) {
                         if (empty.get(entryID)) {
@@ -107,7 +115,7 @@ public class OpenFileTableImpl implements OpenFileTable {
                         }
                     }
 
-                    throw new FileOperationException("Can't find free oft entry");
+                    throw new FileOperationException("OFT is full");
                 }
             }
         }
@@ -192,10 +200,22 @@ public class OpenFileTableImpl implements OpenFileTable {
         int blockID = desc.getBlocks()[blockInDescriptor];
 
         byte[] data = entries.get(id).getBlock();
-        disk.writeBlock(data, blockID);
+        if (data != null) {
+            disk.writeBlock(data, blockID);
+        }
     }
 
     public Disk getDisk() {
         return disk;
+    }
+    
+    public void delete(int descID) {
+        for (int i = 0; i < getMaxNumEntries(); i++) {
+            OftEntry e = entries.get(i);
+            if (e.getDescriptorPosition() == descID) {
+                empty.set(i, true);
+                return;
+            }
+        }
     }
 }

@@ -54,18 +54,21 @@ public class CliHandler implements Runnable {
                         break;
                     }
                 } catch (Exception e) {
-                    if (e instanceof ExitException) {
-                        throw e;
-                    } else if (e instanceof FileOperationException || e instanceof NumberFormatException) {
-                        printError(e, "something went wrong: ", "try again.");
-                    } else {
-                        init();
-                        printError(e, "something went especially wrong: ", "restoring disk...");
-                    }
-
+                    resolvingErrorType(e);
                     break;
                 }
             }
+        }
+    }
+
+    private void resolvingErrorType(Exception e) throws ExitException {
+        if (e instanceof ExitException) {
+            throw ((ExitException) e);
+        } else if (e instanceof FileOperationException || e instanceof NumberFormatException) {
+            printError(e, "something went wrong: ", "try again.");
+        } else {
+            init();
+            printError(e, "something went especially wrong: ", "restoring disk...");
         }
     }
 

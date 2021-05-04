@@ -5,6 +5,7 @@ import ua.knu.elements.Descriptor;
 import ua.knu.elements.DirectoryEntry;
 import ua.knu.exceptions.FileOperationException;
 import ua.knu.io.disk.Disk;
+import ua.knu.util.FilenameConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class OpenFileTableImpl implements OpenFileTable {
             // Load next block
             byte[] data = loadBlock(0, blockNumber);
             if (data == null) {
-                throw new FileOperationException(String.format("File with name = %o doesn't exist", filename));
+                throw new FileOperationException(String.format("File with name = %s doesn't exist", FilenameConverter.convertToString(filename)));
             }
 
             // Iterate over block to find directory entry with same name
@@ -93,7 +94,7 @@ public class OpenFileTableImpl implements OpenFileTable {
                         OftEntry e = entries.get(i);
                         if (!empty.get(i) && e.getDescriptorPosition() == entry.getDescriptorID()) {
                             empty.set(i, true);
-                            throw new FileOperationException(String.format("File with name = %o already opened with id = %o", filename, i));
+                            throw new FileOperationException(String.format("File with name = %s already opened with id = %o", FilenameConverter.convertToString(filename), i));
                         }
                     }
 
@@ -120,7 +121,7 @@ public class OpenFileTableImpl implements OpenFileTable {
             }
         }
 
-        throw new FileOperationException(String.format("File with name = %o doesn't exist", filename));
+        throw new FileOperationException(String.format("File with name = %s doesn't exist", FilenameConverter.convertToString(filename)));
     }
 
     @Override

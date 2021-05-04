@@ -25,8 +25,8 @@ public class FileManagerImpl implements FileManager {
     private static final String DIRECTORY_IS_FULL = "Directory is full";
     private static final String FILE_WITH_ID_IS_NOT_OPEN = "File with id = %o is not open";
     private static final String FILE_WITH_ID_IS_FULL = "File with id = %o is full";
-    private static final String FILE_DOES_NOT_EXIST = "File with filename = %o does not exist";
-    private static final String FILE_DOES_EXIST = "File with filename = %o exists";
+    private static final String FILE_DOES_NOT_EXIST = "File with filename = %s does not exist";
+    private static final String FILE_DOES_EXIST = "File with filename = %s exists";
 
     private OpenFileTable oft;
     private Disk disk;
@@ -52,7 +52,7 @@ public class FileManagerImpl implements FileManager {
     @Override
     public void create(int filename) throws FileOperationException {
         if (files.containsKey(filename)) {
-            throw new FileOperationException(String.format(FILE_DOES_EXIST, filename));
+            throw new FileOperationException(String.format(FILE_DOES_EXIST, FilenameConverter.convertToString(filename)));
         }
 
         DirectoryEntry entry = new DirectoryEntry();
@@ -275,7 +275,7 @@ public class FileManagerImpl implements FileManager {
 
     public void remove(int filename) throws FileOperationException {
         if (!files.containsKey(filename)) {
-            throw new FileOperationException(String.format(FILE_DOES_NOT_EXIST, filename));
+            throw new FileOperationException(String.format(FILE_DOES_NOT_EXIST, FilenameConverter.convertToString(filename)));
         }
 
         DirectoryEntry entry = new DirectoryEntry();

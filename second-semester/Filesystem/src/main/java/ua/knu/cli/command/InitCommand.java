@@ -24,7 +24,7 @@ public class InitCommand extends Command {
 
         verifyCorrectParametersAmount(parameters.length);
 
-        if (!DiskInitializer.isInitialized) {
+        if (!DiskInitializer.isInitialized()) {
             view.write("disk initialized");
         } else {
             view.write("disk restored");

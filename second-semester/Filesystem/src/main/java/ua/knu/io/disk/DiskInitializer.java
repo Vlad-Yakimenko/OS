@@ -1,5 +1,6 @@
 package ua.knu.io.disk;
 
+import lombok.Getter;
 import ua.knu.elements.Bitmap;
 import ua.knu.elements.Descriptor;
 
@@ -7,7 +8,12 @@ import static ua.knu.util.Constants.DISK_PATH;
 
 public class DiskInitializer {
 
-    public static boolean isInitialized;
+    private DiskInitializer() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    @Getter
+    private static boolean isInitialized;
 
     public static Disk initialize() {
         FileDisk disk = new FileDisk(DISK_PATH, 64, 64);

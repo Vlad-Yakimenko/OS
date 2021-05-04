@@ -64,7 +64,7 @@ public class CliHandler implements Runnable {
     private void resolvingErrorType(Exception e) throws ExitException {
         if (e instanceof ExitException) {
             throw ((ExitException) e);
-        } else if (e instanceof FileOperationException || e instanceof NumberFormatException || e instanceof IllegalArgumentException) {
+        } else if (e instanceof FileOperationException || e instanceof IllegalArgumentException) {
             printError(e, "something went wrong: ", "try again.");
         } else {
             init();

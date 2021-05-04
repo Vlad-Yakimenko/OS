@@ -2,10 +2,12 @@ package ua.knu.cli;
 
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.apache.commons.lang3.StringUtils;
 import ua.knu.cli.command.*;
 import ua.knu.cli.view.View;
 import ua.knu.exceptions.ExitException;
+import ua.knu.exceptions.FileOperationException;
 import ua.knu.filesystem.FileManager;
 import ua.knu.filesystem.FileManagerImpl;
 import ua.knu.io.disk.DiskInitializer;
@@ -17,24 +19,13 @@ import java.util.List;
 public class CliHandler implements Runnable {
 
     private View view;
+
+    @NonFinal
     private List<Command> commands;
 
     public CliHandler(View view) {
-        FileManager fileManager = new FileManagerImpl(DiskInitializer.initialize());
         this.view = view;
-        this.commands = Arrays.asList(
-                new InitCommand(view),
-                new CreateCommand(fileManager, view),
-                new RemoveCommand(fileManager, view),
-                new OpenCommand(fileManager, view),
-                new CloseCommand(fileManager, view),
-                new WriteCommand(fileManager, view),
-                new ReadCommand(fileManager, view),
-                new SeekCommand(fileManager, view),
-                new DirectoryCommand(fileManager, view),
-                new HelpCommand(view),
-                new ExitCommand()
-        );
+        init();
     }
 
     @Override
@@ -63,25 +54,49 @@ public class CliHandler implements Runnable {
                         break;
                     }
                 } catch (Exception e) {
-                    if (e instanceof ExitException) {
-                        throw e;
-                    }
-
-                    printError(e);
+                    resolvingErrorType(e);
                     break;
                 }
             }
         }
     }
 
-    private void printError(Exception e) {
-        StringBuilder message = new StringBuilder(e.getMessage() == null ? StringUtils.EMPTY : e.getMessage());
+    private void resolvingErrorType(Exception e) throws ExitException {
+        if (e instanceof ExitException) {
+            throw ((ExitException) e);
+        } else if (e instanceof FileOperationException || e instanceof NumberFormatException) {
+            printError(e, "something went wrong: ", "try again.");
+        } else {
+            init();
+            printError(e, "something went especially wrong: ", "restoring disk...");
+        }
+    }
 
-        if (e.getCause() != null) {
-            message.append(" ").append(e.getCause().getMessage());
+    private void printError(Exception exception, String explanation, String comment) {
+        StringBuilder message = new StringBuilder(exception.getMessage() == null ? StringUtils.EMPTY : exception.getMessage());
+
+        if (exception.getCause() != null) {
+            message.append(" ").append(exception.getCause().getMessage());
         }
 
-        view.write("something went wrong: " + message.toString().toLowerCase());
-        view.write("try again.");
+        view.write(explanation + message.toString().toLowerCase());
+        view.write(comment);
+    }
+
+    private void init() {
+        FileManager fileManager = new FileManagerImpl(DiskInitializer.initialize());
+        this.commands = Arrays.asList(
+                new InitCommand(view),
+                new CreateCommand(fileManager, view),
+                new RemoveCommand(fileManager, view),
+                new OpenCommand(fileManager, view),
+                new CloseCommand(fileManager, view),
+                new WriteCommand(fileManager, view),
+                new ReadCommand(fileManager, view),
+                new SeekCommand(fileManager, view),
+                new DirectoryCommand(fileManager, view),
+                new HelpCommand(view),
+                new ExitCommand()
+        );
     }
 }

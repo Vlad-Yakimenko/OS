@@ -225,11 +225,8 @@ public class FileManagerImpl implements FileManager {
         OftEntry entry = oft.getEntryById(id);
 
         for (int symbolID = 0; symbolID < str.length(); symbolID++) {
-            if (entry.getCurrentPosition() == oft.getDisk().getBlockSize()*3 - 1) {
-                throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));
-            }
             if (entry.getCurrentPosition() != 0 && (entry.getCurrentPosition()) % oft.getDisk().getBlockSize() == 0) {
-                if ((entry.getCurrentPosition()) / oft.getDisk().getBlockSize() > 2) {
+                if ((entry.getCurrentPosition()) / oft.getDisk().getBlockSize() > 3) {
                     oft.setDescriptorByID(id, file);
                     oft.storeBlock(id);
                     throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));
@@ -243,6 +240,9 @@ public class FileManagerImpl implements FileManager {
             }
 
             if (entry.getBlock() == null) {
+                if (entry.getCurrentPosition() == oft.getDisk().getBlockSize()*3) {
+                    throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));
+                }
                 int blockNumber = entry.getCurrentPosition() / oft.getDisk().getBlockSize();
                 byte[] zeroBlock = oft.getDisk().readBlock(0);
 
@@ -269,8 +269,10 @@ public class FileManagerImpl implements FileManager {
             entry.setCurrentPosition(entry.getCurrentPosition() + 1);
         }
 
-        oft.setDescriptorByID(id, file);
+        entry.setCurrentPosition(entry.getCurrentPosition() - 1);
         oft.storeBlock(id);
+        oft.setDescriptorByID(id, file);
+        entry.setCurrentPosition(entry.getCurrentPosition() + 1);
     }
 
     public void remove(int filename) throws FileOperationException {

@@ -28,6 +28,8 @@ public class HelpCommand extends Command {
         view.write("\t\tcloses file by the given index");
         view.write("\twr 1 text");
         view.write("\t\twrites given text in a file by the index of an opened file");
+        view.write("\twrs 1 a 10");
+        view.write("\t\twrites given symbol n times in a file by the index of an opened file(first parameter is index, second - symbol to be written and third - times)");
         view.write("\trd 1 10");
         view.write("\t\treads the given amount of bytes from an opened file(first parameter is index, second - amount of bytes)");
         view.write("\tsk 1 0");

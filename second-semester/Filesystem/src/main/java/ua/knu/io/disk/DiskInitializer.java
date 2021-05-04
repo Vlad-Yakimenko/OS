@@ -1,13 +1,16 @@
 package ua.knu.io.disk;
 
-import ua.knu.elements.*;
+import ua.knu.elements.Bitmap;
+import ua.knu.elements.Descriptor;
+
+import static ua.knu.util.Constants.DISK_PATH;
 
 public class DiskInitializer {
 
     public static boolean isInitialized;
 
     public static Disk initialize() {
-        FileDisk disk = new FileDisk("src/main/resources/disk.bin", 64, 64);
+        FileDisk disk = new FileDisk(DISK_PATH, 64, 64);
         disk.init();
 
         byte[] row = disk.readBlock(0);

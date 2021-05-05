@@ -11,7 +11,7 @@ public class FilenameConverter {
     }
 
     public static int convertToInt(String filename) {
-        byte[] filenameBytes = filename.getBytes(StandardCharsets.UTF_8);
+        byte[] filenameBytes = filename.getBytes(StandardCharsets.US_ASCII);
         byte[] bytes = Arrays.copyOf(filenameBytes, 4);
 
         ByteBuffer wrap = ByteBuffer.wrap(bytes);

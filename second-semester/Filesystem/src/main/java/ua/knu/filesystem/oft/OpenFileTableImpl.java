@@ -5,6 +5,7 @@ import ua.knu.elements.Descriptor;
 import ua.knu.elements.DirectoryEntry;
 import ua.knu.exceptions.FileOperationException;
 import ua.knu.io.disk.Disk;
+import ua.knu.util.FilenameConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class OpenFileTableImpl implements OpenFileTable {
             // Load next block
             byte[] data = loadBlock(0, blockNumber);
             if (data == null) {
-                throw new FileOperationException(String.format("File with name = %o doesn't exist", filename));
+                throw new FileOperationException(String.format("File with name = %s doesn't exist", FilenameConverter.convertToString(filename)));
             }
 
             // Iterate over block to find directory entry with same name
@@ -89,6 +90,14 @@ public class OpenFileTableImpl implements OpenFileTable {
                     data = disk.readBlock(block);
                     desc.deserialize(data, offset * desc.size());
 
+                    for (int i = 0; i < getMaxNumEntries(); i++) {
+                        OftEntry e = entries.get(i);
+                        if (!empty.get(i) && e.getDescriptorPosition() == entry.getDescriptorID()) {
+                            empty.set(i, true);
+                            throw new FileOperationException(String.format("File with name = %s already opened with id = %o", FilenameConverter.convertToString(filename), i));
+                        }
+                    }
+
                     // Find free OTF entry
                     for (int entryID = 0; entryID < maxNumEntries; entryID++) {
                         if (empty.get(entryID)) {
@@ -107,12 +116,12 @@ public class OpenFileTableImpl implements OpenFileTable {
                         }
                     }
 
-                    throw new FileOperationException("Can't find free oft entry");
+                    throw new FileOperationException("OFT is full");
                 }
             }
         }
 
-        throw new FileOperationException(String.format("File with name = %o doesn't exist", filename));
+        throw new FileOperationException(String.format("File with name = %s doesn't exist", FilenameConverter.convertToString(filename)));
     }
 
     @Override
@@ -192,10 +201,22 @@ public class OpenFileTableImpl implements OpenFileTable {
         int blockID = desc.getBlocks()[blockInDescriptor];
 
         byte[] data = entries.get(id).getBlock();
-        disk.writeBlock(data, blockID);
+        if (data != null) {
+            disk.writeBlock(data, blockID);
+        }
     }
 
     public Disk getDisk() {
         return disk;
+    }
+    
+    public void delete(int descID) {
+        for (int i = 0; i < getMaxNumEntries(); i++) {
+            OftEntry e = entries.get(i);
+            if (e.getDescriptorPosition() == descID) {
+                empty.set(i, true);
+                return;
+            }
+        }
     }
 }

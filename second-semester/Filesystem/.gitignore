@@ -2,4 +2,11 @@
 
 .gradle
 .idea
+.vscode
+.classpath
+.project
+.settings
+bin
 build
+src/main/resources/disk.bin
+disk.bin

@@ -1,0 +1,14 @@
+in
+cr foo
+op foo
+wr 1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+wr 1 yyyyyyyyyy
+sk 1 55
+rd 1 10
+dr
+in
+op foo
+rd 1 3
+cr foo
+dr
+ex

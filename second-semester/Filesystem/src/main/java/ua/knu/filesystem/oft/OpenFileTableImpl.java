@@ -93,7 +93,6 @@ public class OpenFileTableImpl implements OpenFileTable {
                     for (int i = 0; i < getMaxNumEntries(); i++) {
                         OftEntry e = entries.get(i);
                         if (!empty.get(i) && e.getDescriptorPosition() == entry.getDescriptorID()) {
-                            empty.set(i, true);
                             throw new FileOperationException(String.format("File with name = %s already opened with id = %o", FilenameConverter.convertToString(filename), i));
                         }
                     }
@@ -126,7 +125,7 @@ public class OpenFileTableImpl implements OpenFileTable {
 
     @Override
     public int close(int id) throws FileOperationException {
-        if (id < 0 || id >= entries.size()) {
+        if (id <= 0 || id >= entries.size()) {
             throw new FileOperationException(String.format("Id = %o is out of range", id));
         }
 

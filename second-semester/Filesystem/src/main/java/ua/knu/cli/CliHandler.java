@@ -3,7 +3,6 @@ package ua.knu.cli;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import ua.knu.cli.command.*;
 import ua.knu.cli.view.View;

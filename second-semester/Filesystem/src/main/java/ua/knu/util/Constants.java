@@ -8,5 +8,5 @@ public class Constants {
 
     public static final String COMMAND_SEPARATOR = " ";
 
-    public static final String DISK_PATH = "src/main/resources/disk.bin";
+    public static final String DISK_PATH = "src/main/resources/%s.bin";
 }

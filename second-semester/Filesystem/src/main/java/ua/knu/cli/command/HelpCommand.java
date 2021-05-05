@@ -18,6 +18,12 @@ public class HelpCommand extends Command {
     @Override
     public void process(String command) {
         view.write("commands:");
+        view.write("\tind name");
+        view.write("\t\tcreates empty disk with the given name");
+        view.write("\topd name");
+        view.write("\t\topens disk with the given name");
+        view.write("\tcld name");
+        view.write("\t\tcloses currently opened disk");
         view.write("\tcr name");
         view.write("\t\tcreates file with the given name(filename must contain 4 or less symbols)");
         view.write("\trm name");

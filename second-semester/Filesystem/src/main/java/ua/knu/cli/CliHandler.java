@@ -3,6 +3,7 @@ package ua.knu.cli;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import ua.knu.cli.command.*;
 import ua.knu.cli.view.View;
@@ -21,7 +22,10 @@ public class CliHandler implements Runnable {
     private View view;
 
     @NonFinal
-    private List<Command> commands;
+    private List<Command> diskCommands;
+
+    @NonFinal
+    private List<Command> utilCommands;
 
     public CliHandler(View view) {
         this.view = view;
@@ -43,11 +47,33 @@ public class CliHandler implements Runnable {
         view.write("hello!");
 
         while (true) {
+            var diskCommandProcessed = false;
             view.write("enter command (or help if you need):");
 
             String input = view.read();
 
-            for (Command command : commands) {
+            for (Command command : diskCommands) {
+                try {
+                    if (command.canProcess(input)) {
+                        diskCommandProcessed = true;
+                        if (!DiskInitializer.isInitialized()) {
+                            view.write("you must initialize or open disk before work with filesystem");
+                            break;
+                        }
+                        command.process(input);
+                        break;
+                    }
+                } catch (Exception e) {
+                    resolvingErrorType(e);
+                    break;
+                }
+            }
+
+            if (diskCommandProcessed) {
+                continue;
+            }
+
+            for (Command command : utilCommands) {
                 try {
                     if (command.canProcess(input)) {
                         command.process(input);
@@ -84,9 +110,9 @@ public class CliHandler implements Runnable {
     }
 
     private void init() {
-        FileManager fileManager = new FileManagerImpl(DiskInitializer.initialize());
-        this.commands = Arrays.asList(
-                new InitCommand(view),
+        FileManager fileManager = new FileManagerImpl();
+
+        this.diskCommands = Arrays.asList(
                 new CreateCommand(fileManager, view),
                 new RemoveCommand(fileManager, view),
                 new OpenCommand(fileManager, view),
@@ -95,7 +121,13 @@ public class CliHandler implements Runnable {
                 new WriteSequenceCommand(fileManager, view),
                 new ReadCommand(fileManager, view),
                 new SeekCommand(fileManager, view),
-                new DirectoryCommand(fileManager, view),
+                new DirectoryCommand(fileManager, view)
+        );
+
+        this.utilCommands = Arrays.asList(
+                new InitDiskCommand(fileManager, view),
+                new OpenDiskCommand(fileManager, view),
+                new CloseDiskCommand(view),
                 new HelpCommand(view),
                 new ExitCommand()
         );

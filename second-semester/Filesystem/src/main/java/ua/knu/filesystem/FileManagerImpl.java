@@ -1,6 +1,5 @@
 package ua.knu.filesystem;
 
-import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import ua.knu.elements.Bitmap;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@FieldDefaults(makeFinal = true)
 public class FileManagerImpl implements FileManager {
 
     private static final String ID_IS_OUT_OF_RANGE = "Id = %o is out of range";
@@ -32,7 +30,7 @@ public class FileManagerImpl implements FileManager {
     private OpenFileTable oft;
     private Disk disk;
 
-    public FileManagerImpl(Disk disk) {
+    public void init(Disk disk) {
         this.oft = new OpenFileTableImpl(disk);
         this.disk = disk;
     }

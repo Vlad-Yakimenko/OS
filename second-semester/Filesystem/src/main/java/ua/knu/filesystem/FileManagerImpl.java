@@ -243,7 +243,9 @@ public class FileManagerImpl implements FileManager {
 
             byte[] block = entry.getBlock();
             block[entry.getCurrentPosition() % oft.getDisk().getBlockSize()] = (byte) str.charAt(symbolID);
-            file.setLength(file.getLength() + 1);
+            if (file.getLength() <= entry.getCurrentPosition()) {
+                file.setLength(file.getLength() + 1);
+            }
             entry.setCurrentPosition(entry.getCurrentPosition() + 1);
         }
 

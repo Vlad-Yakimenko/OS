@@ -4,18 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import ua.knu.cli.view.View;
+import ua.knu.filesystem.FileManager;
+import ua.knu.filesystem.FileManagerImpl;
 import ua.knu.io.disk.DiskInitializer;
 import ua.knu.util.Constants;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
-public class InitCommand extends Command {
+public class InitDiskCommand extends Command {
 
+    private FileManager fileManager;
     private View view;
 
     @Override
     public boolean canProcess(String command) {
-        return command.equals("in");
+        return command.startsWith("ind ");
     }
 
     @Override
@@ -24,15 +27,12 @@ public class InitCommand extends Command {
 
         verifyCorrectParametersAmount(parameters.length);
 
-        if (!DiskInitializer.isInitialized) {
-            view.write("disk initialized");
-        } else {
-            view.write("disk restored");
-        }
+        ((FileManagerImpl) fileManager).init(DiskInitializer.initialize(parameters[1]));
+        view.write("disk initialized");
     }
 
     @Override
     public String getCommandSample() {
-        return "in";
+        return "ind name";
     }
 }

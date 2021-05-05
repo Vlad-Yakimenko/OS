@@ -1,7 +1,5 @@
 package ua.knu.filesystem;
 
-import lombok.experimental.FieldDefaults;
-import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import ua.knu.elements.Bitmap;
@@ -15,7 +13,6 @@ import ua.knu.util.FilenameConverter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@FieldDefaults(makeFinal = true)
 public class FileManagerImpl implements FileManager {
 
     private static final String ID_IS_OUT_OF_RANGE = "Id = %s is out of range";
@@ -32,7 +29,7 @@ public class FileManagerImpl implements FileManager {
     private Disk disk;
     Map<Integer, FileMetadata> files;
 
-    public FileManagerImpl(Disk disk) {
+    public void init(Disk disk) {
         this.oft = new OpenFileTableImpl(disk);
         this.disk = disk;
         this.files = new HashMap<>();

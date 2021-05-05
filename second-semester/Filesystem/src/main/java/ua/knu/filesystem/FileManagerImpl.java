@@ -1,5 +1,6 @@
 package ua.knu.filesystem;
 
+import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import ua.knu.elements.Bitmap;
@@ -94,7 +95,6 @@ public class FileManagerImpl implements FileManager {
         OftEntry oftEntry = oft.getEntryById(id);
 
         if (count <= 0 || count > blockSize * oft.getMaxDescriptorBlockNumber(0)) {
-            System.out.println(String.format(COUNT_IS_OUT_OF_RANGE, count));
             throw new FileOperationException(String.format(COUNT_IS_OUT_OF_RANGE, count));
         }
 

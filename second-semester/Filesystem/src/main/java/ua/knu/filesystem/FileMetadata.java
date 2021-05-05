@@ -9,11 +9,11 @@ public class FileMetadata {
     int directoryEntryID;
     int size;
     
-    public FileMetadata(int fn, int di, int ei, int s) {
-        filename = fn;
-        descriptorID = di;
-        directoryEntryID = ei;
-        size = s;
+    public FileMetadata(int filename, int descriptorID, int directoryEntryID, int size) {
+        this.filename = filename;
+        this.descriptorID = descriptorID;
+        this.directoryEntryID = directoryEntryID;
+        this.size = size;
     }
     
     @Override

@@ -179,6 +179,12 @@ public class OpenFileTableImpl implements OpenFileTable {
     @Override
     public byte[] loadBlock(int id, int block) {
         Descriptor desc = getDescriptorByID(id);
+        
+        entries.get(id).setCurrentPosition(disk.getBlockSize() * block);
+        if (block > 2) {
+            block = 2;
+        }
+
         if (desc.getBlocks()[block] <= 0) {
             entries.get(id).setBlock(null);
             entries.get(id).setCurrentPosition(disk.getBlockSize() * block);
@@ -188,7 +194,6 @@ public class OpenFileTableImpl implements OpenFileTable {
         byte[] data = disk.readBlock(desc.getBlocks()[block]);
 
         entries.get(id).setBlock(data);
-        entries.get(id).setCurrentPosition(disk.getBlockSize() * block);
 
         return data;
     }
@@ -196,7 +201,14 @@ public class OpenFileTableImpl implements OpenFileTable {
     @Override
     public void storeBlock(int id) {
         Descriptor desc = getDescriptorByID(id);
-        int blockInDescriptor = entries.get(id).getCurrentPosition() / disk.getBlockSize();
+        int blockInDescriptor = 0;
+
+        if (entries.get(id).getCurrentPosition() >= disk.getBlockSize()*3) {
+            blockInDescriptor = 2;
+        } else {
+            blockInDescriptor = entries.get(id).getCurrentPosition() / disk.getBlockSize();
+        }
+
         int blockID = desc.getBlocks()[blockInDescriptor];
 
         byte[] data = entries.get(id).getBlock();

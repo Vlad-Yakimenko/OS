@@ -161,7 +161,7 @@ public class FileManagerImpl implements FileManager {
 
         int endPos = oft.getDescriptorByID(id).getLength();
 
-        if (pos < 0 || pos > endPos) {
+        if (pos < 0 || pos > endPos || pos > disk.getBlockSize()*3) {
             throw new FileOperationException(String.format(POSITION_IS_OUT_OF_RANGE, pos));
         }
 
@@ -195,21 +195,17 @@ public class FileManagerImpl implements FileManager {
             throw new FileOperationException(String.format(FILE_WITH_ID_IS_NOT_OPEN, id));
         }
 
-        if (oft.isEmptyEntry(id)) {
-            throw new FileOperationException(String.format(FILE_WITH_ID_IS_NOT_OPEN, id));
-        }
-
         Descriptor file = oft.getDescriptorByID(id);
         OftEntry entry = oft.getEntryById(id);
 
         for (int symbolID = 0; symbolID < str.length(); symbolID++) {
-            if (entry.getCurrentPosition() != 0 && (entry.getCurrentPosition()) % oft.getDisk().getBlockSize() == 0) {
-                if ((entry.getCurrentPosition()) / oft.getDisk().getBlockSize() > 3) {
-                    oft.setDescriptorByID(id, file);
-                    oft.storeBlock(id);
-                    throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));
-                }
+            if ((entry.getCurrentPosition()) / oft.getDisk().getBlockSize() >= 3) {
+                oft.setDescriptorByID(id, file);
+                oft.storeBlock(id);
+                throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));
+            }
 
+            if (entry.getCurrentPosition() != 0 && (entry.getCurrentPosition()) % oft.getDisk().getBlockSize() == 0) {
                 entry.setCurrentPosition(entry.getCurrentPosition() - 1);
                 oft.storeBlock(id);
                 oft.setDescriptorByID(id, file);
@@ -432,16 +428,15 @@ public class FileManagerImpl implements FileManager {
 
         int currentPosition = 0;
         int currentID = 0;
-        int fileCounter = 0;
-        int filesAmount = oft.getDescriptorByID(0).getLength();
 
         for (int blockNumber = 0; blockNumber < oft.getMaxDescriptorBlockNumber(0); blockNumber++) {
-            byte[] data = oft.loadBlock(0, blockNumber);
-            if (data == null) {
-                return;
-            }
+            currentPosition = 0;
 
-            while (fileCounter != filesAmount) {
+            while (currentPosition < disk.getBlockSize()) {
+                byte[] data = oft.loadBlock(0, blockNumber);
+                if (data == null) {
+                    return;
+                }
                 entry.deserialize(data, currentPosition);
                 int descriptorID = entry.getDescriptorID();
 
@@ -460,7 +455,6 @@ public class FileManagerImpl implements FileManager {
                 files.put(entry.getName(), new FileMetadata(entry.getName(), entry.getDescriptorID(), currentID, desc.getLength()));
 
                 currentPosition += entry.size();
-                fileCounter++;
                 currentID++;
             }
         }

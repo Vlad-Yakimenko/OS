@@ -141,9 +141,7 @@ public class FileManagerImpl implements FileManager {
             count -= amountOfReadBytes;
 
             oft.storeBlock(id);
-            // if (currentBlockNumber < 3) {
             oft.loadBlock(id, currentBlockNumber);
-            // }
         }
 
         return readBytes;
@@ -202,7 +200,6 @@ public class FileManagerImpl implements FileManager {
 
         for (int symbolID = 0; symbolID < str.length(); symbolID++) {
             if ((entry.getCurrentPosition()) / oft.getDisk().getBlockSize() >= 3) {
-                // entry.setCurrentPosition(oft.getDisk().getBlockSize() * 3 - 1);
                 oft.setDescriptorByID(id, file);
                 oft.storeBlock(id);
                 throw new FileOperationException(String.format(FILE_WITH_ID_IS_FULL, id));

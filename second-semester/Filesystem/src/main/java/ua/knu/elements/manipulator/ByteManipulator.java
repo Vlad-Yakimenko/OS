@@ -3,8 +3,8 @@ package ua.knu.elements.manipulator;
 public class ByteManipulator implements Manipulator {
 
     @Override
-    public int readInt(byte[] data, int pos) {
-        int result = 0;
+    public long readInt(byte[] data, int pos) {
+        long result = 0;
 
         for (int byteID = 0; byteID < 4; byteID++) {
             result = result << 8;
@@ -18,7 +18,7 @@ public class ByteManipulator implements Manipulator {
     }
 
     @Override
-    public void writeInt(byte[] data, int pos, int value) {
+    public void writeInt(byte[] data, int pos, long value) {
         for (int byteID = 0; byteID < 4; byteID++) {
             data[pos + byteID] = (byte) (value >> (24 - byteID * 8));
         }

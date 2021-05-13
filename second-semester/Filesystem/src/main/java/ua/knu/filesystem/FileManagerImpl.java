@@ -210,7 +210,6 @@ public class FileManagerImpl implements FileManager {
                 oft.storeBlock(id);
                 oft.setDescriptorByID(id, file);
                 oft.loadBlock(id, (entry.getCurrentPosition() + 1) / oft.getDisk().getBlockSize());
-                entry.setCurrentPosition(entry.getCurrentPosition() + 1);
             }
 
             if (entry.getBlock() == null) {

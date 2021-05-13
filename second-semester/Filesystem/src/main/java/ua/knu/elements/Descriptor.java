@@ -21,13 +21,13 @@ public class Descriptor extends FSElement {
     }
     
     public FSElement deserialize(byte[] data, int pos) {
-        length = manipulator.readInt(data, pos);
+        length = (int) manipulator.readInt(data, pos);
         if (length > (((long) 1) << 15)) {
             length = -1;
         }
         
         for (int blockID = 0; blockID < blocks.length; blockID++) {
-            blocks[blockID] = manipulator.readInt(data, pos + 4 * (blockID + 1));
+            blocks[blockID] = (int) manipulator.readInt(data, pos + 4 * (blockID + 1));
         }
 
         return this;

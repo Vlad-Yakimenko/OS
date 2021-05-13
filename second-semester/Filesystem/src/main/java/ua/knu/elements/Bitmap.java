@@ -54,7 +54,7 @@ public class Bitmap extends FSElement {
     }
 
     public void serialize(byte[] data, int pos) {
-        manipulator.writeInt(data, pos, (int) (map >> 32));
-        manipulator.writeInt(data, pos + 4, (int) map);
+        manipulator.writeInt(data, pos, (long) (map >> 32));
+        manipulator.writeInt(data, pos + 4, (long) map);
     }
 }

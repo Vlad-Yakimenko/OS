@@ -1,0 +1,213 @@
+hello!
+enter command (or help if you need):
+disk initialized
+enter command (or help if you need):
+file f1 created
+enter command (or help if you need):
+file f1 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f2 created
+enter command (or help if you need):
+file f2 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f3 created
+enter command (or help if you need):
+file f3 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f4 created
+enter command (or help if you need):
+file f4 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f5 created
+enter command (or help if you need):
+file f5 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f6 created
+enter command (or help if you need):
+file f6 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f7 created
+enter command (or help if you need):
+file f7 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f8 created
+enter command (or help if you need):
+file f8 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f9 created
+enter command (or help if you need):
+file f9 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f10 created
+enter command (or help if you need):
+file f10 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f11 created
+enter command (or help if you need):
+file f11 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f12 created
+enter command (or help if you need):
+file f12 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f13 created
+enter command (or help if you need):
+file f13 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f14 created
+enter command (or help if you need):
+file f14 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f15 created
+enter command (or help if you need):
+file f15 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f16 created
+enter command (or help if you need):
+file f16 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f17 created
+enter command (or help if you need):
+file f17 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f18 created
+enter command (or help if you need):
+file f18 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f19 created
+enter command (or help if you need):
+file f19 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f20 created
+enter command (or help if you need):
+file f20 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f21 created
+enter command (or help if you need):
+file f21 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f22 created
+enter command (or help if you need):
+file f22 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+file f23 created
+enter command (or help if you need):
+file f23 opened, index=1
+enter command (or help if you need):
+128 bytes written
+enter command (or help if you need):
+file by index 1 was successfully closed
+enter command (or help if you need):
+something went wrong: directory is full
+try again.
+enter command (or help if you need):
+something went wrong: file with name = f24 doesn't exist
+try again.
+enter command (or help if you need):
+something went wrong: file with id = 1 is not open
+try again.
+enter command (or help if you need):
+something went wrong: file with id 1 is not open
+try again.
+enter command (or help if you need):
+something went wrong: directory is full
+try again.
+enter command (or help if you need):
+something went wrong: file with name = f25 doesn't exist
+try again.
+enter command (or help if you need):
+something went wrong: file with id = 1 is not open
+try again.
+enter command (or help if you need):
+something went wrong: file with id 1 is not open
+try again.
+enter command (or help if you need):
+goodbye!

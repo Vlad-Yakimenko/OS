@@ -21,8 +21,8 @@ public class DirectoryEntry extends FSElement {
     }
 
     public FSElement deserialize(byte[] data, int pos) {
-        name = manipulator.readInt(data, pos);
-        descriptorID = manipulator.readInt(data, pos + 4);
+        name = (int) manipulator.readInt(data, pos);
+        descriptorID = (int) manipulator.readInt(data, pos + 4);
         
         return this;
     }

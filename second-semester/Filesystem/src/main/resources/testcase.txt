@@ -1,0 +1,102 @@
+ind lesson15
+cr f1
+op f1
+wrs 1 x 193
+cl 1
+cr f2
+op f2
+wrs 1 x 193
+cl 1
+cr f3
+op f3
+wrs 1 x 193
+cl 1
+cr f4
+op f4
+wrs 1 x 193
+cl 1
+cr f5
+op f5
+wrs 1 x 193
+cl 1
+cr f6
+op f6
+wrs 1 x 193
+cl 1
+cr f7
+op f7
+wrs 1 x 193
+cl 1
+cr f8
+op f8
+wrs 1 x 193
+cl 1
+cr f9
+op f9
+wrs 1 x 193
+cl 1
+cr f10
+op f10
+wrs 1 x 193
+cl 1
+cr f11
+op f11
+wrs 1 x 193
+cl 1
+cr f12
+op f12
+wrs 1 x 193
+cl 1
+cr f13
+op f13
+wrs 1 x 193
+cl 1
+cr f14
+op f14
+wrs 1 x 193
+cl 1
+cr f15
+op f15
+wrs 1 x 193
+cl 1
+cr f16
+op f16
+wrs 1 x 193
+cl 1
+cr f17
+op f17
+wrs 1 x 193
+cl 1
+cr f18
+op f18
+wrs 1 x 193
+cl 1
+cr f19
+op f19
+wrs 1 y 193
+cl 1
+cr f20
+op f20
+wrs 1 x 193
+cl 1
+cr f21
+op f21
+wrs 1 x 193
+cl 1
+cr f22
+op f22
+wrs 1 x 193
+cl 1
+cr f23
+op f23
+wrs 1 x 193
+cl 1
+cr f24
+op f24
+wrs 1 x 193
+cl 1
+cr f25
+op f25
+wrs 1 x 193
+cl 1
+ex

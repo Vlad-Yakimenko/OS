@@ -25,6 +25,7 @@ public class FileManagerImpl implements FileManager {
     private static final String FILE_WITH_ID_IS_FULL = "File with id = %s is full";
     private static final String FILE_DOES_NOT_EXIST = "File with filename = %s does not exist";
     private static final String FILE_DOES_EXIST = "File with filename = %s exists";
+    private static final String DISK_IS_FULL = "Disk is full";
 
     private OpenFileTable oft;
     private Disk disk;
@@ -210,7 +211,6 @@ public class FileManagerImpl implements FileManager {
                 oft.storeBlock(id);
                 oft.setDescriptorByID(id, file);
                 oft.loadBlock(id, (entry.getCurrentPosition() + 1) / oft.getDisk().getBlockSize());
-                entry.setCurrentPosition(entry.getCurrentPosition() + 1);
             }
 
             if (entry.getBlock() == null) {
@@ -224,6 +224,9 @@ public class FileManagerImpl implements FileManager {
                 map.deserialize(zeroBlock, 0);
 
                 int freePos = map.nextFree();
+                if (freePos <= 0) {
+                    throw new FileOperationException(DISK_IS_FULL);
+                }
                 map.set(freePos);
                 map.serialize(zeroBlock, 0);
                 oft.getDisk().writeBlock(zeroBlock, 0);
@@ -367,6 +370,9 @@ public class FileManagerImpl implements FileManager {
                 map.deserialize(zeroBlock, 0);
 
                 int freePos = map.nextFree();
+                if (freePos <= 0) {
+                    throw new FileOperationException(DISK_IS_FULL);
+                }
                 map.set(freePos);
                 map.serialize(zeroBlock, 0);
                 oft.getDisk().writeBlock(zeroBlock, 0);

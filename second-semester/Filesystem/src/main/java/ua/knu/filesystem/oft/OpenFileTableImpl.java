@@ -212,7 +212,7 @@ public class OpenFileTableImpl implements OpenFileTable {
         int blockID = desc.getBlocks()[blockInDescriptor];
 
         byte[] data = entries.get(id).getBlock();
-        if (data != null) {
+        if (data != null && blockID != 0) {
             disk.writeBlock(data, blockID);
         }
     }
